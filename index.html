@@ -1,2386 +1,2523 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FFCS-BY-ME | VIT Chennai Timetable Builder</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      /* ─── Reset ─── */
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
 
-      html {
-        scroll-behavior: smooth;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FFCS-BY-ME | VIT Chennai Timetable Builder</title>
+  <meta name="description" content="FFCS Timetable Builder for VIT Chennai - Built by Meijeevan K.T" />
+  <meta name="author" content="Meijeevan K.T" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <style>
+    /* ─── Reset ─── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-      /* ─── Cyberpunk Tokens ─── */
-      :root {
-        --bg: #0a0a0f;
-        --surface: #111827;
-        --surface2: #1a1a25;
-        --surface3: #12121a;
-        --border: #2a2a3d;
-        --border2: #3a3a55;
+    html {
+      scroll-behavior: smooth;
+    }
 
-        --cyan: #00fff9;
-        --cyan-dim: rgba(0, 255, 249, 0.15);
-        --cyan-glow: rgba(0, 255, 249, 0.3);
-        --pink: #ff00ff;
-        --pink-dim: rgba(255, 0, 255, 0.15);
-        --pink-glow: rgba(255, 0, 255, 0.3);
-        --purple: #9d00ff;
-        --purple-dim: rgba(157, 0, 255, 0.15);
-        --yellow: #ffd000;
-        --yellow-dim: rgba(255, 208, 0, 0.15);
-        --green: #00ff66;
-        --green-dim: rgba(0, 255, 102, 0.15);
-        --green-glow: rgba(0, 255, 102, 0.3);
-        --red: #ff3333;
-        --red-dim: rgba(255, 51, 51, 0.15);
-        --red-glow: rgba(255, 51, 51, 0.3);
-        --orange: #ff6600;
-        --orange-dim: rgba(255, 102, 0, 0.15);
+    /* ─── Cyberpunk Tokens ─── */
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111827;
+      --surface2: #1a1a25;
+      --surface3: #12121a;
+      --border: #2a2a3d;
+      --border2: #3a3a55;
 
-        --text: #e0e0ff;
-        --text2: #a0a0cc;
-        --text3: #6060a0;
+      --cyan: #00fff9;
+      --cyan-dim: rgba(0, 255, 249, 0.15);
+      --cyan-glow: rgba(0, 255, 249, 0.3);
+      --pink: #ff00ff;
+      --pink-dim: rgba(255, 0, 255, 0.15);
+      --pink-glow: rgba(255, 0, 255, 0.3);
+      --purple: #9d00ff;
+      --purple-dim: rgba(157, 0, 255, 0.15);
+      --yellow: #ffd000;
+      --yellow-dim: rgba(255, 208, 0, 0.15);
+      --green: #00ff66;
+      --green-dim: rgba(0, 255, 102, 0.15);
+      --green-glow: rgba(0, 255, 102, 0.3);
+      --red: #ff3333;
+      --red-dim: rgba(255, 51, 51, 0.15);
+      --red-glow: rgba(255, 51, 51, 0.3);
+      --orange: #ff6600;
+      --orange-dim: rgba(255, 102, 0, 0.15);
 
-        --r-sm: 6px;
-        --r-md: 10px;
-        --r-lg: 14px;
-        --r-xl: 20px;
-        --r-full: 9999px;
-      }
+      --text: #e0e0ff;
+      --text2: #a0a0cc;
+      --text3: #6060a0;
 
-      /* ─── Scrollbar ─── */
-      ::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-      }
+      --r-sm: 6px;
+      --r-md: 10px;
+      --r-lg: 14px;
+      --r-xl: 20px;
+      --r-full: 9999px;
+    }
 
-      ::-webkit-scrollbar-track {
-        background: #12121a;
-      }
+    /* ─── Scrollbar ─── */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
 
-      ::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, var(--cyan), var(--purple));
-        border-radius: 4px;
-      }
+    ::-webkit-scrollbar-track {
+      background: #12121a;
+    }
 
-      ::selection {
-        background: rgba(0, 255, 249, 0.25);
-        color: #fff;
-      }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--cyan), var(--purple));
+      border-radius: 4px;
+    }
 
-      /* ─── Body / Grid BG ─── */
-      body {
-        font-family: "Inter", system-ui, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        min-height: 100vh;
-        font-size: 14px;
-        line-height: 1.5;
-        overflow-x: hidden;
-        background-image:
-          linear-gradient(rgba(0, 255, 249, 0.025) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(0, 255, 249, 0.025) 1px, transparent 1px),
-          linear-gradient(rgba(157, 0, 255, 0.015) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(157, 0, 255, 0.015) 1px, transparent 1px);
-        background-size:
-          50px 50px,
-          50px 50px,
-          100px 100px,
-          100px 100px;
-      }
+    ::selection {
+      background: rgba(0, 255, 249, 0.25);
+      color: #fff;
+    }
 
-      /* ─── Scanline overlay ─── */
-      body::after {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background: linear-gradient(
-          180deg,
+    /* ─── Body / Grid BG ─── */
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-x: hidden;
+      background-image:
+        linear-gradient(rgba(0, 255, 249, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 249, 0.025) 1px, transparent 1px),
+        linear-gradient(rgba(157, 0, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(157, 0, 255, 0.015) 1px, transparent 1px);
+      background-size:
+        50px 50px,
+        50px 50px,
+        100px 100px,
+        100px 100px;
+    }
+
+    /* ─── Scanline overlay ─── */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg,
           transparent 0%,
           rgba(0, 255, 249, 0.015) 50%,
-          transparent 100%
-        );
-        pointer-events: none;
-        z-index: 9997;
-        animation: scanline 10s linear infinite;
+          transparent 100%);
+      pointer-events: none;
+      z-index: 9997;
+      animation: scanline 10s linear infinite;
+    }
+
+    @keyframes scanline {
+      0% {
+        transform: translateY(-100%);
       }
 
-      @keyframes scanline {
-        0% {
-          transform: translateY(-100%);
-        }
+      100% {
+        transform: translateY(100vh);
+      }
+    }
 
-        100% {
-          transform: translateY(100vh);
-        }
+    /* ─── Watermark ─── */
+    .watermark {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      color: rgba(0, 255, 249, 0.15);
+      pointer-events: none;
+      z-index: 9998;
+      text-align: right;
+      line-height: 1.4;
+      transition: color 0.3s ease;
+    }
+
+    .watermark:hover {
+      color: rgba(0, 255, 249, 0.4);
+    }
+
+    .watermark .wm-line {
+      display: block;
+      letter-spacing: 1px;
+    }
+
+    /* ─── Ambient glows ─── */
+    .glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(80px);
+    }
+
+    .glow-cyan {
+      width: 400px;
+      height: 400px;
+      top: -100px;
+      left: 10%;
+      background: rgba(0, 255, 249, 0.04);
+    }
+
+    .glow-purple {
+      width: 400px;
+      height: 400px;
+      bottom: -100px;
+      right: 10%;
+      background: rgba(157, 0, 255, 0.04);
+    }
+
+    /* ─── Header ─── */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 10, 15, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 0 40px rgba(0, 255, 249, 0.05);
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--cyan-dim), var(--purple-dim));
+      border: 1px solid rgba(0, 255, 249, 0.3);
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 15px var(--cyan-glow);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .brand-logo:hover {
+      box-shadow: 0 0 30px var(--cyan-glow);
+      transform: scale(1.05);
+    }
+
+    .brand-name {
+      font-family: "Orbitron", sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--cyan);
+      text-shadow:
+        0 0 10px var(--cyan-glow),
+        0 0 20px var(--cyan-glow);
+      letter-spacing: 2px;
+      line-height: 1.1;
+    }
+
+    .brand-sub {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      color: var(--text3);
+      letter-spacing: 1px;
+      margin-top: 2px;
+    }
+
+    .header-right {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      color: var(--text3);
+      text-align: right;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-right .hd-sep {
+      color: var(--cyan);
+      opacity: 0.5;
+    }
+
+    .storage-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      color: var(--green);
+      padding: 3px 8px;
+      border-radius: var(--r-full);
+      border: 1px solid rgba(0, 255, 102, 0.2);
+      background: var(--green-dim);
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    .storage-indicator .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
       }
 
-      /* ─── Ambient glows ─── */
-      .glow-orb {
-        position: fixed;
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 0;
-        filter: blur(80px);
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    /* ─── Nav ─── */
+    .nav-bar {
+      position: sticky;
+      top: 64px;
+      z-index: 90;
+      background: rgba(17, 24, 39, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      padding: 0 20px;
+    }
+
+    .nav-tab {
+      padding: 13px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text3);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+      font-family: "Inter", sans-serif;
+    }
+
+    .nav-tab svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .nav-tab.active {
+      color: var(--cyan);
+      border-bottom-color: var(--cyan);
+      text-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    .nav-tab:hover:not(.active) {
+      color: var(--text);
+      background: rgba(0, 255, 249, 0.03);
+    }
+
+    .nav-badge {
+      background: var(--red);
+      color: #fff;
+      border-radius: var(--r-full);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      min-width: 18px;
+      text-align: center;
+      box-shadow: 0 0 8px var(--red-glow);
+    }
+
+    /* ─── Main ─── */
+    .main-wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px 16px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
       }
 
-      .glow-cyan {
-        width: 400px;
-        height: 400px;
-        top: -100px;
-        left: 10%;
-        background: rgba(0, 255, 249, 0.04);
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
+    }
 
-      .glow-purple {
-        width: 400px;
-        height: 400px;
-        bottom: -100px;
-        right: 10%;
-        background: rgba(157, 0, 255, 0.04);
+    /* ─── Cyber Card ─── */
+    .card {
+      background: linear-gradient(145deg, var(--surface2), var(--surface3));
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 20px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg,
+          transparent,
+          var(--cyan),
+          transparent);
+      opacity: 0.4;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: "JetBrains Mono", monospace;
+      letter-spacing: 0.5px;
+    }
+
+    .card-title svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--cyan);
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .card-title.pink-title {
+      color: var(--pink);
+      text-shadow: 0 0 8px var(--pink-glow);
+    }
+
+    .card-title.pink-title svg {
+      stroke: var(--pink);
+    }
+
+    .card-title.green-title {
+      color: var(--green);
+    }
+
+    .card-title.green-title svg {
+      stroke: var(--green);
+    }
+
+    /* ─── Form Fields ─── */
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .field-grid.three {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    @media (max-width: 640px) {
+
+      .field-grid,
+      .field-grid.three {
+        grid-template-columns: 1fr;
       }
+    }
 
-      /* ─── Header ─── */
-      .site-header {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background: rgba(10, 10, 15, 0.92);
-        backdrop-filter: blur(12px);
-        border-bottom: 1px solid var(--border);
-        box-shadow: 0 0 40px rgba(0, 255, 249, 0.05);
-      }
+    .field label {
+      display: block;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text3);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-family: "JetBrains Mono", monospace;
+    }
 
-      .header-inner {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 12px 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-      }
+    .field label .req {
+      color: var(--red);
+    }
 
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
+    .field input {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      font-size: 13px;
+      font-family: "JetBrains Mono", monospace;
+      color: var(--text);
+      background: rgba(26, 26, 37, 0.8);
+      transition: all 0.2s ease;
+    }
 
-      .brand-logo {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, var(--cyan-dim), var(--purple-dim));
-        border: 1px solid rgba(0, 255, 249, 0.3);
-        border-radius: var(--r-md);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        box-shadow: 0 0 15px var(--cyan-glow);
-      }
+    .field input:focus {
+      outline: none;
+      border-color: var(--cyan);
+      box-shadow:
+        0 0 0 3px rgba(0, 255, 249, 0.1),
+        0 0 20px rgba(0, 255, 249, 0.15);
+    }
 
-      .brand-name {
-        font-family: "Orbitron", sans-serif;
-        font-size: 1.1rem;
-        font-weight: 800;
-        color: var(--cyan);
-        text-shadow:
-          0 0 10px var(--cyan-glow),
-          0 0 20px var(--cyan-glow);
-        letter-spacing: 2px;
-        line-height: 1.1;
-      }
+    .field input::placeholder {
+      color: var(--text3);
+    }
 
-      .brand-sub {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 10px;
-        color: var(--text3);
-        letter-spacing: 1px;
-        margin-top: 2px;
-      }
+    /* ─── Edit Mode Inputs in Summary ─── */
+    .edit-input {
+      width: 100%;
+      padding: 6px 10px;
+      border: 1px solid var(--cyan);
+      border-radius: var(--r-sm);
+      font-size: 12px;
+      font-family: "JetBrains Mono", monospace;
+      color: var(--text);
+      background: rgba(26, 26, 37, 0.9);
+      transition: all 0.2s ease;
+    }
 
+    .edit-input:focus {
+      outline: none;
+      border-color: var(--green);
+      box-shadow: 0 0 0 2px rgba(0, 255, 102, 0.1);
+    }
+
+    /* ─── Slot Toggle ─── */
+    .slot-toggle-wrap {
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .slot-toggle {
+      display: flex;
+      gap: 4px;
+      background: rgba(26, 26, 37, 0.8);
+      border: 1px solid var(--border);
+      border-radius: var(--r-full);
+      padding: 4px;
+    }
+
+    .toggle-opt {
+      padding: 8px 22px;
+      border-radius: var(--r-full);
+      border: none;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text3);
+      transition: all 0.2s ease;
+      font-family: "JetBrains Mono", monospace;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .toggle-opt svg {
+      width: 13px;
+      height: 13px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.5;
+    }
+
+    .toggle-opt.theory-on {
+      background: linear-gradient(135deg, var(--cyan-dim), var(--purple-dim));
+      color: var(--cyan);
+      border: 1px solid rgba(0, 255, 249, 0.35);
+      box-shadow: 0 0 15px var(--cyan-glow);
+    }
+
+    .toggle-opt.lab-on {
+      background: linear-gradient(135deg, var(--pink-dim), var(--purple-dim));
+      color: var(--pink);
+      border: 1px solid rgba(255, 0, 255, 0.35);
+      box-shadow: 0 0 15px var(--pink-glow);
+    }
+
+    .selected-slot-display {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      padding: 5px 12px;
+      border-radius: var(--r-full);
+      background: var(--cyan-dim);
+      border: 1px solid rgba(0, 255, 249, 0.25);
+      color: var(--cyan);
+      display: none;
+    }
+
+    .selected-slot-display.lab-mode {
+      background: var(--pink-dim);
+      border-color: rgba(255, 0, 255, 0.25);
+      color: var(--pink);
+    }
+
+    .selected-slot-display.visible {
+      display: inline-block;
+    }
+
+    /* ─── Slot Panes ─── */
+    .slot-pane {
+      display: none;
+    }
+
+    .slot-pane.active {
+      display: block;
+    }
+
+    .slot-group {
+      margin-bottom: 14px;
+    }
+
+    .slot-group-label {
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text3);
+      margin-bottom: 7px;
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    .slot-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .slot-btn {
+      padding: 5px 12px;
+      font-size: 11.5px;
+      font-weight: 600;
+      border-radius: var(--r-full);
+      border: 1px solid var(--border);
+      background: rgba(26, 26, 37, 0.6);
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: "JetBrains Mono", monospace;
+      letter-spacing: 0.2px;
+    }
+
+    .slot-btn:hover {
+      border-color: rgba(0, 255, 249, 0.4);
+      color: var(--cyan);
+      background: var(--cyan-dim);
+      transform: translateY(-1px);
+      box-shadow: 0 0 10px rgba(0, 255, 249, 0.15);
+    }
+
+    .slot-btn.selected {
+      background: linear-gradient(135deg, var(--cyan-dim), var(--purple-dim));
+      color: var(--cyan);
+      border-color: rgba(0, 255, 249, 0.5);
+      box-shadow: 0 0 15px var(--cyan-glow);
+    }
+
+    .lab-pane .slot-btn:hover {
+      border-color: rgba(255, 0, 255, 0.4);
+      color: var(--pink);
+      background: var(--pink-dim);
+      box-shadow: 0 0 10px rgba(255, 0, 255, 0.15);
+    }
+
+    .lab-pane .slot-btn.selected {
+      background: linear-gradient(135deg, var(--pink-dim), var(--purple-dim));
+      color: var(--pink);
+      border-color: rgba(255, 0, 255, 0.5);
+      box-shadow: 0 0 15px var(--pink-glow);
+    }
+
+    /* ─── Buttons ─── */
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: var(--r-md);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: rgba(26, 26, 37, 0.8);
+      color: var(--text2);
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-family: "JetBrains Mono", monospace;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg,
+          transparent,
+          rgba(0, 255, 249, 0.08),
+          transparent);
+      transition: left 0.4s ease;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .btn:hover {
+      border-color: rgba(0, 255, 249, 0.4);
+      color: var(--cyan);
+      box-shadow: 0 0 15px rgba(0, 255, 249, 0.1);
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--cyan-dim), var(--purple-dim));
+      color: var(--cyan);
+      border-color: rgba(0, 255, 249, 0.4);
+      box-shadow: 0 0 20px rgba(0, 255, 249, 0.2);
+    }
+
+    .btn.primary:hover {
+      box-shadow: 0 0 30px var(--cyan-glow);
+    }
+
+    .btn.danger-soft {
+      background: var(--red-dim);
+      color: var(--red);
+      border-color: rgba(255, 51, 51, 0.35);
+    }
+
+    .btn.danger-soft:hover {
+      box-shadow: 0 0 15px var(--red-glow);
+    }
+
+    .btn.success-soft {
+      background: var(--green-dim);
+      color: var(--green);
+      border-color: rgba(0, 255, 102, 0.35);
+    }
+
+    .btn.success-soft:hover {
+      box-shadow: 0 0 15px var(--green-glow);
+    }
+
+    .btn-edit {
+      background: rgba(157, 0, 255, 0.1);
+      color: var(--purple);
+      border-color: rgba(157, 0, 255, 0.3);
+      padding: 4px 10px;
+      font-size: 11px;
+    }
+
+    .btn-edit:hover {
+      border-color: rgba(157, 0, 255, 0.5);
+      color: var(--purple);
+      box-shadow: 0 0 10px rgba(157, 0, 255, 0.2);
+    }
+
+    .btn-save {
+      background: var(--green-dim);
+      color: var(--green);
+      border-color: rgba(0, 255, 102, 0.3);
+      padding: 4px 10px;
+      font-size: 11px;
+    }
+
+    .btn-save:hover {
+      border-color: rgba(0, 255, 102, 0.5);
+      box-shadow: 0 0 10px var(--green-glow);
+    }
+
+    .btn-cancel {
+      background: var(--red-dim);
+      color: var(--red);
+      border-color: rgba(255, 51, 51, 0.3);
+      padding: 4px 10px;
+      font-size: 11px;
+    }
+
+    .btn-cancel:hover {
+      border-color: rgba(255, 51, 51, 0.5);
+      box-shadow: 0 0 10px var(--red-glow);
+    }
+
+    /* ─── Course Items ─── */
+    .courses-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 16px;
+      color: var(--text3);
+      font-size: 13px;
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    .empty-state svg {
+      width: 40px;
+      height: 40px;
+      stroke: var(--text3);
+      fill: none;
+      stroke-width: 1.5;
+      display: block;
+      margin: 0 auto 12px;
+      opacity: 0.5;
+    }
+
+    .empty-state p {
+      opacity: 0.7;
+    }
+
+    .course-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: rgba(26, 26, 37, 0.6);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      transition: all 0.15s;
+    }
+
+    .course-item:hover {
+      border-color: rgba(0, 255, 249, 0.25);
+    }
+
+    .course-item.conflict-item {
+      background: var(--red-dim);
+      border-color: rgba(255, 51, 51, 0.35);
+      border-left: 3px solid var(--red);
+    }
+
+    .ci-code {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--cyan);
+      min-width: 110px;
+    }
+
+    .conflict-item .ci-code {
+      color: var(--red);
+    }
+
+    .ci-slot {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10.5px;
+      background: var(--cyan-dim);
+      color: var(--cyan);
+      padding: 3px 9px;
+      border-radius: var(--r-full);
+      border: 1px solid rgba(0, 255, 249, 0.2);
+      white-space: nowrap;
+    }
+
+    .conflict-item .ci-slot {
+      background: var(--red-dim);
+      color: var(--red);
+      border-color: rgba(255, 51, 51, 0.25);
+    }
+
+    .ci-name {
+      flex: 1;
+      font-size: 12.5px;
+      color: var(--text2);
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ci-credits {
+      font-size: 11.5px;
+      font-weight: 700;
+      font-family: "JetBrains Mono", monospace;
+      color: var(--text3);
+      white-space: nowrap;
+    }
+
+    .ci-del {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text3);
+      font-size: 18px;
+      line-height: 1;
+      padding: 3px 5px;
+      border-radius: 4px;
+      transition: all 0.12s;
+    }
+
+    .ci-del:hover {
+      color: var(--red);
+      background: var(--red-dim);
+    }
+
+    /* ═══════════════════════════════
+   TIMETABLE
+═══════════════════════════════ */
+    .tt-scroll-wrap {
+      overflow-x: auto;
+      border-radius: var(--r-lg);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: 0 0 40px rgba(0, 255, 249, 0.05);
+    }
+
+    .tt-table {
+      border-collapse: collapse;
+      table-layout: fixed;
+      min-width: 860px;
+      width: 100%;
+      font-size: 11px;
+    }
+
+    .tt-table td,
+    .tt-table th {
+      border: 1px solid var(--border);
+      padding: 0;
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    /* Header rows */
+    .th-time-theory {
+      background: linear-gradient(180deg, #0d1f3c, #152d5e);
+      color: var(--cyan);
+      font-size: 8.5px;
+      font-weight: 600;
+      padding: 5px 3px;
+      white-space: nowrap;
+      line-height: 1.3;
+      border-bottom: 1px solid rgba(0, 255, 249, 0.2);
+      text-shadow: 0 0 6px rgba(0, 255, 249, 0.4);
+    }
+
+    .th-time-lab {
+      background: linear-gradient(180deg, #1a0a30, #2d1060);
+      color: var(--pink);
+      font-size: 8.5px;
+      font-weight: 600;
+      padding: 5px 3px;
+      white-space: nowrap;
+      line-height: 1.3;
+      border-bottom: 1px solid rgba(255, 0, 255, 0.2);
+      text-shadow: 0 0 6px rgba(255, 0, 255, 0.3);
+    }
+
+    .th-corner {
+      background: linear-gradient(135deg, #0a0a1a, #1a0a30);
+      color: var(--cyan);
+      font-weight: 700;
+      font-size: 11px;
+      padding: 6px 4px;
+      min-width: 40px;
+      width: 40px;
+      border-right: 1px solid var(--border);
+      font-family: "Orbitron", sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    .th-corner-label {
+      font-size: 7px;
+      opacity: 0.5;
+      display: block;
+      margin-top: 2px;
+      font-family: "Inter", sans-serif;
+    }
+
+    .th-period {
+      background: linear-gradient(180deg, #0d1f3c, #0a1530);
+      color: var(--text3);
+      font-size: 8px;
+      font-weight: 600;
+      padding: 3px 2px;
+      letter-spacing: 0.5px;
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    /* Day cell */
+    .td-day {
+      background: linear-gradient(180deg, #0a0a1a, #12122a);
+      color: var(--cyan);
+      font-weight: 800;
+      font-size: 11.5px;
+      letter-spacing: 1px;
+      min-width: 36px;
+      width: 36px;
+      padding: 4px 2px;
+      border-right: 2px solid rgba(0, 255, 249, 0.15);
+      font-family: "Orbitron", sans-serif;
+      text-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    /* Theory/Lab label */
+    .td-theory-label {
+      background: linear-gradient(180deg, #0d1f3c, #152d5e);
+      color: var(--cyan);
+      font-size: 9px;
+      font-weight: 700;
+      width: 46px;
+      min-width: 46px;
+      padding: 4px 3px;
+      letter-spacing: 0.3px;
+      font-family: "JetBrains Mono", monospace;
+      border-right: 2px solid var(--border);
+      text-shadow: 0 0 6px rgba(0, 255, 249, 0.3);
+    }
+
+    .td-lab-label {
+      background: linear-gradient(180deg, #1a0a30, #2d1060);
+      color: var(--pink);
+      font-size: 9px;
+      font-weight: 700;
+      width: 46px;
+      min-width: 46px;
+      padding: 4px 3px;
+      letter-spacing: 0.3px;
+      font-family: "JetBrains Mono", monospace;
+      border-right: 2px solid var(--border);
+      text-shadow: 0 0 6px rgba(255, 0, 255, 0.3);
+    }
+
+    /* Lunch */
+    .td-lunch {
+      background: linear-gradient(180deg, #1a1500, #252000);
+      color: var(--yellow);
+      font-weight: 700;
+      font-size: 8.5px;
+      letter-spacing: 0.5px;
+      padding: 4px 2px;
+      width: 36px;
+      min-width: 36px;
+      border-left: 1px solid rgba(255, 208, 0, 0.2);
+      border-right: 1px solid rgba(255, 208, 0, 0.2);
+      font-family: "JetBrains Mono", monospace;
+      text-shadow: 0 0 6px rgba(255, 208, 0, 0.4);
+    }
+
+    /* Slot cells */
+    .sc {
+      height: 54px;
+      min-width: 68px;
+      width: 68px;
+      background: #0d0d1a;
+      transition: background 0.12s;
+      padding: 3px 4px;
+      position: relative;
+      vertical-align: top;
+    }
+
+    .sc:hover {
+      background: #13132a;
+    }
+
+    .sc.sc-filled {
+      background: linear-gradient(160deg,
+          rgba(0, 255, 102, 0.08),
+          rgba(0, 255, 102, 0.04));
+      border-color: rgba(0, 255, 102, 0.25) !important;
+    }
+
+    .sc.sc-conflict {
+      background: linear-gradient(160deg,
+          rgba(255, 51, 51, 0.15),
+          rgba(255, 51, 51, 0.08));
+      border-color: rgba(255, 51, 51, 0.4) !important;
+      box-shadow: inset 0 0 10px rgba(255, 51, 51, 0.1);
+    }
+
+    .sc.sc-dash {
+      background: #0a0a12;
+      opacity: 0.5;
+    }
+
+    .sc-block {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 8px;
+      font-weight: 700;
+      color: var(--text3);
+      display: block;
+      margin-bottom: 1px;
+      line-height: 1;
+    }
+
+    .sc-filled .sc-block {
+      color: rgba(0, 255, 102, 0.6);
+    }
+
+    .sc-conflict .sc-block {
+      color: rgba(255, 51, 51, 0.7);
+    }
+
+    .sc-code {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--text);
+      display: block;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    .sc-filled .sc-code {
+      color: var(--green);
+      text-shadow: 0 0 6px rgba(0, 255, 102, 0.3);
+    }
+
+    .sc-conflict .sc-code {
+      color: var(--red);
+    }
+
+    .sc-name {
+      font-size: 7.5px;
+      color: var(--text3);
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      line-height: 1.2;
+      margin-top: 1px;
+    }
+
+    .sc-room {
+      font-size: 6.5px;
+      color: var(--text3);
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      line-height: 1.2;
+      margin-top: 1px;
+      opacity: 0.8;
+    }
+
+    .sc-filled .sc-room {
+      color: rgba(0, 255, 102, 0.6);
+    }
+
+    .sc-conflict .sc-room {
+      color: rgba(255, 51, 51, 0.5);
+    }
+
+    .sc-overlap-tag {
+      display: inline-block;
+      font-size: 7px;
+      font-weight: 700;
+      background: var(--red);
+      color: #fff;
+      border-radius: 3px;
+      padding: 1px 4px;
+      margin-top: 2px;
+      letter-spacing: 0.3px;
+      line-height: 1.4;
+      box-shadow: 0 0 6px var(--red-glow);
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    /* Legend */
+    .tt-legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 10px 16px;
+      font-size: 11.5px;
+      color: var(--text3);
+      border-top: 1px solid var(--border);
+      background: var(--surface3);
+      border-radius: 0 0 var(--r-lg) var(--r-lg);
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      display: inline-block;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    .ld-empty {
+      background: #0d0d1a;
+      border: 1px solid var(--border);
+    }
+
+    .ld-filled {
+      background: rgba(0, 255, 102, 0.12);
+      border: 1px solid rgba(0, 255, 102, 0.3);
+    }
+
+    .ld-conflict {
+      background: rgba(255, 51, 51, 0.2);
+      border: 1px solid rgba(255, 51, 51, 0.4);
+    }
+
+    .ld-lunch {
+      background: rgba(255, 208, 0, 0.1);
+      border: 1px solid rgba(255, 208, 0, 0.25);
+    }
+
+    /* ─── Summary Stats ─── */
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card {
+      background: linear-gradient(145deg, var(--surface2), var(--surface3));
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 16px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg,
+          transparent,
+          var(--cyan),
+          transparent);
+      opacity: 0.3;
+    }
+
+    .stat-card:hover {
+      border-color: rgba(0, 255, 249, 0.25);
+      box-shadow: 0 0 20px rgba(0, 255, 249, 0.08);
+    }
+
+    .stat-num {
+      font-family: "Orbitron", sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--cyan);
+      text-shadow: 0 0 10px var(--cyan-glow);
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: var(--text3);
+      margin-top: 5px;
+      font-weight: 600;
+      font-family: "JetBrains Mono", monospace;
+      letter-spacing: 1px;
+    }
+
+    .stat-card.warn-card .stat-num {
+      color: var(--orange);
+      text-shadow: 0 0 10px rgba(255, 102, 0, 0.4);
+    }
+
+    .stat-card.danger-card .stat-num {
+      color: var(--red);
+      text-shadow: 0 0 10px var(--red-glow);
+    }
+
+    /* ─── Result Table ─── */
+    .result-wrap {
+      overflow-x: auto;
+      border-radius: var(--r-lg);
+      border: 1px solid var(--border);
+      box-shadow: 0 0 20px rgba(0, 255, 249, 0.04);
+    }
+
+    .result-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+      min-width: 520px;
+    }
+
+    .result-table thead tr {
+      background: linear-gradient(135deg,
+          rgba(0, 255, 249, 0.08),
+          rgba(157, 0, 255, 0.08));
+      border-bottom: 1px solid var(--border);
+    }
+
+    .result-table th {
+      color: var(--cyan);
+      padding: 10px 12px;
+      font-weight: 700;
+      text-align: left;
+      font-size: 11px;
+      white-space: nowrap;
+      font-family: "JetBrains Mono", monospace;
+      letter-spacing: 0.5px;
+    }
+
+    .result-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid rgba(42, 42, 61, 0.6);
+      color: var(--text);
+      font-size: 12.5px;
+    }
+
+    .result-table tbody tr:hover td {
+      background: rgba(0, 255, 249, 0.03);
+    }
+
+    .result-table tbody tr.conflict-row td {
+      background: rgba(255, 51, 51, 0.08);
+      border-left: 3px solid var(--red);
+    }
+
+    .result-table tfoot tr td {
+      background: linear-gradient(135deg,
+          rgba(0, 255, 249, 0.06),
+          rgba(157, 0, 255, 0.06));
+      font-weight: 700;
+      font-size: 13px;
+      border-top: 2px solid var(--border);
+      color: var(--text);
+    }
+
+    .slot-pill {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      background: var(--cyan-dim);
+      color: var(--cyan);
+      padding: 2px 8px;
+      border-radius: var(--r-full);
+      border: 1px solid rgba(0, 255, 249, 0.2);
+      white-space: nowrap;
+      display: inline-block;
+    }
+
+    .conflict-row .slot-pill {
+      background: var(--red-dim);
+      color: var(--red);
+      border-color: rgba(255, 51, 51, 0.25);
+    }
+
+    /* ─── Alerts ─── */
+    .alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 15px;
+      border-radius: var(--r-md);
+      font-size: 13px;
+      font-weight: 500;
+      margin-top: 10px;
+    }
+
+    .alert svg {
+      width: 17px;
+      height: 17px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+    }
+
+    .alert-warn {
+      background: rgba(255, 102, 0, 0.1);
+      color: var(--orange);
+      border: 1px solid rgba(255, 102, 0, 0.3);
+    }
+
+    .alert-danger {
+      background: var(--red-dim);
+      color: var(--red);
+      border: 1px solid rgba(255, 51, 51, 0.3);
+    }
+
+    .alert-success {
+      background: var(--green-dim);
+      color: var(--green);
+      border: 1px solid rgba(0, 255, 102, 0.3);
+    }
+
+    /* ─── Actions Bar ─── */
+    .actions-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    /* ─── Toast ─── */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: linear-gradient(135deg, var(--surface2), var(--surface3));
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      padding: 10px 22px;
+      border-radius: var(--r-full);
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow:
+        0 0 30px var(--cyan-glow),
+        0 10px 40px rgba(0, 0, 0, 0.5);
+      transition: transform 0.25s ease;
+      z-index: 9999;
+      white-space: nowrap;
+      pointer-events: none;
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    #toast.warn {
+      border-color: var(--red);
+      color: var(--red);
+      box-shadow: 0 0 30px var(--red-glow);
+    }
+
+    #toast.ok {
+      border-color: var(--green);
+      color: var(--green);
+      box-shadow: 0 0 30px var(--green-glow);
+    }
+
+    /* ─── Footer ─── */
+    .site-footer {
+      text-align: center;
+      padding: 20px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      color: var(--text3);
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+
+    .site-footer a {
+      color: var(--cyan);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .site-footer a:hover {
+      text-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
       .header-right {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 11px;
-        color: var(--text3);
-        text-align: right;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .header-right .hd-sep {
-        color: var(--cyan);
-        opacity: 0.5;
-      }
-
-      .storage-indicator {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        font-size: 10px;
-        color: var(--green);
-        padding: 3px 8px;
-        border-radius: var(--r-full);
-        border: 1px solid rgba(0, 255, 102, 0.2);
-        background: var(--green-dim);
-        font-family: "JetBrains Mono", monospace;
-      }
-
-      .storage-indicator .dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: var(--green);
-        box-shadow: 0 0 6px var(--green);
-        animation: pulse 2s ease-in-out infinite;
-      }
-
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 1;
-        }
-
-        50% {
-          opacity: 0.4;
-        }
-      }
-
-      /* ─── Nav ─── */
-      .nav-bar {
-        position: sticky;
-        top: 64px;
-        z-index: 90;
-        background: rgba(17, 24, 39, 0.95);
-        backdrop-filter: blur(8px);
-        border-bottom: 1px solid var(--border);
-      }
-
-      .nav-inner {
-        max-width: 1400px;
-        margin: 0 auto;
-        display: flex;
-        padding: 0 20px;
+        display: none;
       }
 
       .nav-tab {
-        padding: 13px 20px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        border: none;
-        background: none;
-        color: var(--text3);
-        border-bottom: 2px solid transparent;
-        margin-bottom: -1px;
-        transition: all 0.18s ease;
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        white-space: nowrap;
-        font-family: "Inter", sans-serif;
+        padding: 12px 14px;
+        font-size: 12px;
       }
 
-      .nav-tab svg {
-        width: 15px;
-        height: 15px;
-        stroke: currentColor;
-        stroke-width: 2;
-        fill: none;
-      }
-
-      .nav-tab.active {
-        color: var(--cyan);
-        border-bottom-color: var(--cyan);
-        text-shadow: 0 0 8px var(--cyan-glow);
-      }
-
-      .nav-tab:hover:not(.active) {
-        color: var(--text);
-        background: rgba(0, 255, 249, 0.03);
-      }
-
-      .nav-badge {
-        background: var(--red);
-        color: #fff;
-        border-radius: var(--r-full);
-        font-size: 10px;
-        font-weight: 700;
-        padding: 1px 6px;
-        min-width: 18px;
-        text-align: center;
-        box-shadow: 0 0 8px var(--red-glow);
-      }
-
-      /* ─── Main ─── */
       .main-wrap {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 20px 16px 80px;
-        position: relative;
-        z-index: 1;
+        padding: 12px 10px 80px;
       }
 
-      .panel {
-        display: none;
-      }
-
-      .panel.active {
-        display: block;
-      }
-
-      /* ─── Cyber Card ─── */
       .card {
-        background: linear-gradient(145deg, var(--surface2), var(--surface3));
-        border: 1px solid var(--border);
-        border-radius: var(--r-lg);
-        padding: 20px;
-        margin-bottom: 16px;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          var(--cyan),
-          transparent
-        );
-        opacity: 0.4;
-      }
-
-      .card-title {
-        font-size: 13px;
-        font-weight: 700;
-        color: var(--cyan);
-        margin-bottom: 16px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-family: "JetBrains Mono", monospace;
-        letter-spacing: 0.5px;
-      }
-
-      .card-title svg {
-        width: 16px;
-        height: 16px;
-        stroke: var(--cyan);
-        fill: none;
-        stroke-width: 2;
-      }
-
-      .card-title.pink-title {
-        color: var(--pink);
-        text-shadow: 0 0 8px var(--pink-glow);
-      }
-
-      .card-title.pink-title svg {
-        stroke: var(--pink);
-      }
-
-      .card-title.green-title {
-        color: var(--green);
-      }
-
-      .card-title.green-title svg {
-        stroke: var(--green);
-      }
-
-      /* ─── Form Fields ─── */
-      .field-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-bottom: 12px;
-      }
-
-      .field-grid.three {
-        grid-template-columns: 1fr 1fr 1fr;
-      }
-
-      @media (max-width: 640px) {
-        .field-grid,
-        .field-grid.three {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      .field label {
-        display: block;
-        font-size: 10.5px;
-        font-weight: 700;
-        color: var(--text3);
-        margin-bottom: 5px;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        font-family: "JetBrains Mono", monospace;
-      }
-
-      .field label .req {
-        color: var(--red);
-      }
-
-      .field input {
-        width: 100%;
-        padding: 10px 13px;
-        border: 1px solid var(--border);
-        border-radius: var(--r-md);
-        font-size: 13px;
-        font-family: "JetBrains Mono", monospace;
-        color: var(--text);
-        background: rgba(26, 26, 37, 0.8);
-        transition: all 0.2s ease;
-      }
-
-      .field input:focus {
-        outline: none;
-        border-color: var(--cyan);
-        box-shadow:
-          0 0 0 3px rgba(0, 255, 249, 0.1),
-          0 0 20px rgba(0, 255, 249, 0.15);
-      }
-
-      .field input::placeholder {
-        color: var(--text3);
-      }
-
-      /* ─── Slot Toggle ─── */
-      .slot-toggle-wrap {
-        margin-bottom: 16px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-
-      .slot-toggle {
-        display: flex;
-        gap: 4px;
-        background: rgba(26, 26, 37, 0.8);
-        border: 1px solid var(--border);
-        border-radius: var(--r-full);
-        padding: 4px;
+        padding: 14px;
       }
 
       .toggle-opt {
-        padding: 8px 22px;
-        border-radius: var(--r-full);
-        border: none;
-        font-size: 12px;
-        font-weight: 700;
-        cursor: pointer;
-        background: transparent;
-        color: var(--text3);
-        transition: all 0.2s ease;
-        font-family: "JetBrains Mono", monospace;
-        letter-spacing: 0.5px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .toggle-opt svg {
-        width: 13px;
-        height: 13px;
-        stroke: currentColor;
-        fill: none;
-        stroke-width: 2.5;
-      }
-
-      .toggle-opt.theory-on {
-        background: linear-gradient(135deg, var(--cyan-dim), var(--purple-dim));
-        color: var(--cyan);
-        border: 1px solid rgba(0, 255, 249, 0.35);
-        box-shadow: 0 0 15px var(--cyan-glow);
-      }
-
-      .toggle-opt.lab-on {
-        background: linear-gradient(135deg, var(--pink-dim), var(--purple-dim));
-        color: var(--pink);
-        border: 1px solid rgba(255, 0, 255, 0.35);
-        box-shadow: 0 0 15px var(--pink-glow);
-      }
-
-      .selected-slot-display {
-        font-family: "JetBrains Mono", monospace;
+        padding: 7px 16px;
         font-size: 11px;
-        padding: 5px 12px;
-        border-radius: var(--r-full);
-        background: var(--cyan-dim);
-        border: 1px solid rgba(0, 255, 249, 0.25);
-        color: var(--cyan);
-        display: none;
-      }
-
-      .selected-slot-display.lab-mode {
-        background: var(--pink-dim);
-        border-color: rgba(255, 0, 255, 0.25);
-        color: var(--pink);
-      }
-
-      .selected-slot-display.visible {
-        display: inline-block;
-      }
-
-      /* ─── Slot Panes ─── */
-      .slot-pane {
-        display: none;
-      }
-
-      .slot-pane.active {
-        display: block;
-      }
-
-      .slot-group {
-        margin-bottom: 14px;
-      }
-
-      .slot-group-label {
-        font-size: 9.5px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: var(--text3);
-        margin-bottom: 7px;
-        font-family: "JetBrains Mono", monospace;
-      }
-
-      .slot-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 5px;
-      }
-
-      .slot-btn {
-        padding: 5px 12px;
-        font-size: 11.5px;
-        font-weight: 600;
-        border-radius: var(--r-full);
-        border: 1px solid var(--border);
-        background: rgba(26, 26, 37, 0.6);
-        color: var(--text2);
-        cursor: pointer;
-        transition: all 0.15s ease;
-        font-family: "JetBrains Mono", monospace;
-        letter-spacing: 0.2px;
-      }
-
-      .slot-btn:hover {
-        border-color: rgba(0, 255, 249, 0.4);
-        color: var(--cyan);
-        background: var(--cyan-dim);
-        transform: translateY(-1px);
-        box-shadow: 0 0 10px rgba(0, 255, 249, 0.15);
-      }
-
-      .slot-btn.selected {
-        background: linear-gradient(135deg, var(--cyan-dim), var(--purple-dim));
-        color: var(--cyan);
-        border-color: rgba(0, 255, 249, 0.5);
-        box-shadow: 0 0 15px var(--cyan-glow);
-      }
-
-      .lab-pane .slot-btn:hover {
-        border-color: rgba(255, 0, 255, 0.4);
-        color: var(--pink);
-        background: var(--pink-dim);
-        box-shadow: 0 0 10px rgba(255, 0, 255, 0.15);
-      }
-
-      .lab-pane .slot-btn.selected {
-        background: linear-gradient(135deg, var(--pink-dim), var(--purple-dim));
-        color: var(--pink);
-        border-color: rgba(255, 0, 255, 0.5);
-        box-shadow: 0 0 15px var(--pink-glow);
-      }
-
-      /* ─── Buttons ─── */
-      .btn-row {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-top: 14px;
       }
 
       .btn {
-        padding: 10px 20px;
-        border-radius: var(--r-md);
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        border: 1px solid var(--border);
-        background: rgba(26, 26, 37, 0.8);
-        color: var(--text2);
-        transition: all 0.18s ease;
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        font-family: "JetBrains Mono", monospace;
-        position: relative;
-        overflow: hidden;
+        padding: 9px 14px;
+        font-size: 12px;
       }
 
-      .btn::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(0, 255, 249, 0.08),
-          transparent
-        );
-        transition: left 0.4s ease;
-      }
-
-      .btn:hover::before {
-        left: 100%;
-      }
-
-      .btn svg {
-        width: 14px;
-        height: 14px;
-        stroke: currentColor;
-        fill: none;
-        stroke-width: 2;
-      }
-
-      .btn:hover {
-        border-color: rgba(0, 255, 249, 0.4);
-        color: var(--cyan);
-        box-shadow: 0 0 15px rgba(0, 255, 249, 0.1);
-      }
-
-      .btn:active {
-        transform: scale(0.97);
-      }
-
-      .btn.primary {
-        background: linear-gradient(135deg, var(--cyan-dim), var(--purple-dim));
-        color: var(--cyan);
-        border-color: rgba(0, 255, 249, 0.4);
-        box-shadow: 0 0 20px rgba(0, 255, 249, 0.2);
-      }
-
-      .btn.primary:hover {
-        box-shadow: 0 0 30px var(--cyan-glow);
-      }
-
-      .btn.danger-soft {
-        background: var(--red-dim);
-        color: var(--red);
-        border-color: rgba(255, 51, 51, 0.35);
-      }
-
-      .btn.danger-soft:hover {
-        box-shadow: 0 0 15px var(--red-glow);
-      }
-
-      .btn.success-soft {
-        background: var(--green-dim);
-        color: var(--green);
-        border-color: rgba(0, 255, 102, 0.35);
-      }
-
-      .btn.success-soft:hover {
-        box-shadow: 0 0 15px var(--green-glow);
-      }
-
-      /* ─── Course Items ─── */
-      .courses-list {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        margin-top: 14px;
-      }
-
-      .empty-state {
-        text-align: center;
-        padding: 40px 16px;
-        color: var(--text3);
-        font-size: 13px;
-        font-family: "JetBrains Mono", monospace;
-      }
-
-      .empty-state svg {
-        width: 40px;
-        height: 40px;
-        stroke: var(--text3);
-        fill: none;
-        stroke-width: 1.5;
-        display: block;
-        margin: 0 auto 12px;
-        opacity: 0.5;
-      }
-
-      .empty-state p {
-        opacity: 0.7;
-      }
-
-      .course-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 14px;
-        background: rgba(26, 26, 37, 0.6);
-        border: 1px solid var(--border);
-        border-radius: var(--r-md);
-        transition: all 0.15s;
-      }
-
-      .course-item:hover {
-        border-color: rgba(0, 255, 249, 0.25);
-      }
-
-      .course-item.conflict-item {
-        background: var(--red-dim);
-        border-color: rgba(255, 51, 51, 0.35);
-        border-left: 3px solid var(--red);
-      }
-
-      .ci-code {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 13px;
-        font-weight: 700;
-        color: var(--cyan);
-        min-width: 110px;
-      }
-
-      .conflict-item .ci-code {
-        color: var(--red);
-      }
-
-      .ci-slot {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 10.5px;
-        background: var(--cyan-dim);
-        color: var(--cyan);
-        padding: 3px 9px;
-        border-radius: var(--r-full);
-        border: 1px solid rgba(0, 255, 249, 0.2);
-        white-space: nowrap;
-      }
-
-      .conflict-item .ci-slot {
-        background: var(--red-dim);
-        color: var(--red);
-        border-color: rgba(255, 51, 51, 0.25);
-      }
-
-      .ci-name {
-        flex: 1;
-        font-size: 12.5px;
-        color: var(--text2);
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      .ci-credits {
-        font-size: 11.5px;
-        font-weight: 700;
-        font-family: "JetBrains Mono", monospace;
-        color: var(--text3);
-        white-space: nowrap;
-      }
-
-      .ci-del {
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: var(--text3);
-        font-size: 18px;
-        line-height: 1;
-        padding: 3px 5px;
-        border-radius: 4px;
-        transition: all 0.12s;
-      }
-
-      .ci-del:hover {
-        color: var(--red);
-        background: var(--red-dim);
-      }
-
-      /* ═══════════════════════════════
-   TIMETABLE
-═══════════════════════════════ */
-      .tt-scroll-wrap {
-        overflow-x: auto;
-        border-radius: var(--r-lg);
-        border: 1px solid var(--border);
-        background: var(--surface);
-        box-shadow: 0 0 40px rgba(0, 255, 249, 0.05);
-      }
-
-      .tt-table {
-        border-collapse: collapse;
-        table-layout: fixed;
-        min-width: 860px;
-        width: 100%;
-        font-size: 11px;
-      }
-
-      .tt-table td,
-      .tt-table th {
-        border: 1px solid var(--border);
-        padding: 0;
-        vertical-align: middle;
-        text-align: center;
-      }
-
-      /* Header rows */
-      .th-time-theory {
-        background: linear-gradient(180deg, #0d1f3c, #152d5e);
-        color: var(--cyan);
-        font-size: 8.5px;
-        font-weight: 600;
-        padding: 5px 3px;
-        white-space: nowrap;
-        line-height: 1.3;
-        border-bottom: 1px solid rgba(0, 255, 249, 0.2);
-        text-shadow: 0 0 6px rgba(0, 255, 249, 0.4);
-      }
-
-      .th-time-lab {
-        background: linear-gradient(180deg, #1a0a30, #2d1060);
-        color: var(--pink);
-        font-size: 8.5px;
-        font-weight: 600;
-        padding: 5px 3px;
-        white-space: nowrap;
-        line-height: 1.3;
-        border-bottom: 1px solid rgba(255, 0, 255, 0.2);
-        text-shadow: 0 0 6px rgba(255, 0, 255, 0.3);
-      }
-
-      .th-corner {
-        background: linear-gradient(135deg, #0a0a1a, #1a0a30);
-        color: var(--cyan);
-        font-weight: 700;
-        font-size: 11px;
-        padding: 6px 4px;
-        min-width: 40px;
-        width: 40px;
-        border-right: 1px solid var(--border);
-        font-family: "Orbitron", sans-serif;
-        letter-spacing: 0.5px;
-      }
-
-      .th-corner-label {
-        font-size: 7px;
-        opacity: 0.5;
-        display: block;
-        margin-top: 2px;
-        font-family: "Inter", sans-serif;
-      }
-
-      .th-period {
-        background: linear-gradient(180deg, #0d1f3c, #0a1530);
-        color: var(--text3);
-        font-size: 8px;
-        font-weight: 600;
-        padding: 3px 2px;
-        letter-spacing: 0.5px;
-        font-family: "JetBrains Mono", monospace;
-      }
-
-      /* Day cell */
-      .td-day {
-        background: linear-gradient(180deg, #0a0a1a, #12122a);
-        color: var(--cyan);
-        font-weight: 800;
-        font-size: 11.5px;
-        letter-spacing: 1px;
-        min-width: 36px;
-        width: 36px;
-        padding: 4px 2px;
-        border-right: 2px solid rgba(0, 255, 249, 0.15);
-        font-family: "Orbitron", sans-serif;
-        text-shadow: 0 0 8px var(--cyan-glow);
-      }
-
-      /* Theory/Lab label */
-      .td-theory-label {
-        background: linear-gradient(180deg, #0d1f3c, #152d5e);
-        color: var(--cyan);
-        font-size: 9px;
-        font-weight: 700;
-        width: 46px;
-        min-width: 46px;
-        padding: 4px 3px;
-        letter-spacing: 0.3px;
-        font-family: "JetBrains Mono", monospace;
-        border-right: 2px solid var(--border);
-        text-shadow: 0 0 6px rgba(0, 255, 249, 0.3);
-      }
-
-      .td-lab-label {
-        background: linear-gradient(180deg, #1a0a30, #2d1060);
-        color: var(--pink);
-        font-size: 9px;
-        font-weight: 700;
-        width: 46px;
-        min-width: 46px;
-        padding: 4px 3px;
-        letter-spacing: 0.3px;
-        font-family: "JetBrains Mono", monospace;
-        border-right: 2px solid var(--border);
-        text-shadow: 0 0 6px rgba(255, 0, 255, 0.3);
-      }
-
-      /* Lunch */
-      .td-lunch {
-        background: linear-gradient(180deg, #1a1500, #252000);
-        color: var(--yellow);
-        font-weight: 700;
-        font-size: 8.5px;
-        letter-spacing: 0.5px;
-        padding: 4px 2px;
-        width: 36px;
-        min-width: 36px;
-        border-left: 1px solid rgba(255, 208, 0, 0.2);
-        border-right: 1px solid rgba(255, 208, 0, 0.2);
-        font-family: "JetBrains Mono", monospace;
-        text-shadow: 0 0 6px rgba(255, 208, 0, 0.4);
-      }
-
-      /* Slot cells */
-      .sc {
-        height: 54px;
-        min-width: 68px;
-        width: 68px;
-        background: #0d0d1a;
-        transition: background 0.12s;
-        padding: 3px 4px;
-        position: relative;
-        vertical-align: top;
-      }
-
-      .sc:hover {
-        background: #13132a;
-      }
-
-      .sc.sc-filled {
-        background: linear-gradient(
-          160deg,
-          rgba(0, 255, 102, 0.08),
-          rgba(0, 255, 102, 0.04)
-        );
-        border-color: rgba(0, 255, 102, 0.25) !important;
-      }
-
-      .sc.sc-conflict {
-        background: linear-gradient(
-          160deg,
-          rgba(255, 51, 51, 0.15),
-          rgba(255, 51, 51, 0.08)
-        );
-        border-color: rgba(255, 51, 51, 0.4) !important;
-        box-shadow: inset 0 0 10px rgba(255, 51, 51, 0.1);
-      }
-
-      .sc.sc-dash {
-        background: #0a0a12;
-        opacity: 0.5;
-      }
-
-      .sc-block {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 8px;
-        font-weight: 700;
-        color: var(--text3);
-        display: block;
-        margin-bottom: 1px;
-        line-height: 1;
-      }
-
-      .sc-filled .sc-block {
-        color: rgba(0, 255, 102, 0.6);
-      }
-
-      .sc-conflict .sc-block {
-        color: rgba(255, 51, 51, 0.7);
-      }
-
-      .sc-code {
-        font-size: 9.5px;
-        font-weight: 700;
-        color: var(--text);
-        display: block;
-        line-height: 1.2;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        font-family: "JetBrains Mono", monospace;
-      }
-
-      .sc-filled .sc-code {
-        color: var(--green);
-        text-shadow: 0 0 6px rgba(0, 255, 102, 0.3);
-      }
-
-      .sc-conflict .sc-code {
-        color: var(--red);
-      }
-
-      .sc-name {
-        font-size: 7.5px;
-        color: var(--text3);
-        display: block;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        line-height: 1.2;
-        margin-top: 1px;
-      }
-
-      .sc-overlap-tag {
-        display: inline-block;
-        font-size: 7px;
-        font-weight: 700;
-        background: var(--red);
-        color: #fff;
-        border-radius: 3px;
-        padding: 1px 4px;
-        margin-top: 2px;
-        letter-spacing: 0.3px;
-        line-height: 1.4;
-        box-shadow: 0 0 6px var(--red-glow);
-        font-family: "JetBrains Mono", monospace;
-      }
-
-      /* Legend */
-      .tt-legend {
-        display: flex;
-        gap: 16px;
-        flex-wrap: wrap;
-        padding: 10px 16px;
-        font-size: 11.5px;
-        color: var(--text3);
-        border-top: 1px solid var(--border);
-        background: var(--surface3);
-        border-radius: 0 0 var(--r-lg) var(--r-lg);
-        font-family: "JetBrains Mono", monospace;
-      }
-
-      .legend-dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 3px;
-        display: inline-block;
-        margin-right: 5px;
-        vertical-align: middle;
-      }
-
-      .ld-empty {
-        background: #0d0d1a;
-        border: 1px solid var(--border);
-      }
-
-      .ld-filled {
-        background: rgba(0, 255, 102, 0.12);
-        border: 1px solid rgba(0, 255, 102, 0.3);
-      }
-
-      .ld-conflict {
-        background: rgba(255, 51, 51, 0.2);
-        border: 1px solid rgba(255, 51, 51, 0.4);
-      }
-
-      .ld-lunch {
-        background: rgba(255, 208, 0, 0.1);
-        border: 1px solid rgba(255, 208, 0, 0.25);
-      }
-
-      /* ─── Summary Stats ─── */
       .summary-stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-        gap: 10px;
-        margin-bottom: 16px;
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .brand-name {
+        font-size: 0.9rem;
       }
 
-      .stat-card {
-        background: linear-gradient(145deg, var(--surface2), var(--surface3));
-        border: 1px solid var(--border);
-        border-radius: var(--r-md);
-        padding: 16px;
-        text-align: center;
-        position: relative;
-        overflow: hidden;
-        transition: all 0.2s ease;
+      .nav-tab .tab-label {
+        display: none;
       }
 
-      .stat-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          var(--cyan),
-          transparent
-        );
-        opacity: 0.3;
+      .nav-tab {
+        padding: 12px 16px;
       }
 
-      .stat-card:hover {
-        border-color: rgba(0, 255, 249, 0.25);
-        box-shadow: 0 0 20px rgba(0, 255, 249, 0.08);
+      .btn-row {
+        flex-direction: column;
       }
 
-      .stat-num {
-        font-family: "Orbitron", sans-serif;
-        font-size: 28px;
-        font-weight: 800;
-        line-height: 1;
-        color: var(--cyan);
-        text-shadow: 0 0 10px var(--cyan-glow);
+      .btn {
+        justify-content: center;
       }
+    }
+  </style>
+</head>
 
-      .stat-label {
-        font-size: 10px;
-        color: var(--text3);
-        margin-top: 5px;
-        font-weight: 600;
-        font-family: "JetBrains Mono", monospace;
-        letter-spacing: 1px;
-      }
+<body>
+  <div class="glow-orb glow-cyan"></div>
+  <div class="glow-orb glow-purple"></div>
 
-      .stat-card.warn-card .stat-num {
-        color: var(--orange);
-        text-shadow: 0 0 10px rgba(255, 102, 0, 0.4);
-      }
+  <!-- Watermark -->
+  <div class="watermark">
+    <span class="wm-line">Built by</span>
+    <span class="wm-line">Meijeevan K.T</span>
+  </div>
 
-      .stat-card.danger-card .stat-num {
-        color: var(--red);
-        text-shadow: 0 0 10px var(--red-glow);
-      }
+  <!-- ── Header ── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-logo" onclick="location.reload()" title="Refresh">⚡</div>
+        <div>
+          <div class="brand-name">FFCS-FAST</div>
+          <div class="brand-sub">VIT CHENNAI // TIMETABLE BUILDER</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <span>FULLY FLEXIBLE CREDIT SYSTEM</span>
+        <span class="hd-sep">│</span>
+        <div class="storage-indicator">
+          <span class="dot"></span>
+          <span id="storage-status">AUTO-SAVED</span>
+        </div>
+      </div>
+    </div>
+  </header>
 
-      /* ─── Result Table ─── */
-      .result-wrap {
-        overflow-x: auto;
-        border-radius: var(--r-lg);
-        border: 1px solid var(--border);
-        box-shadow: 0 0 20px rgba(0, 255, 249, 0.04);
-      }
+  <!-- ── Nav ── -->
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <button class="nav-tab active" onclick="switchTab('add', this)">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="16" />
+          <line x1="8" y1="12" x2="16" y2="12" />
+        </svg>
+        <span class="tab-label">Add Course</span>
+      </button>
+      <button class="nav-tab" onclick="switchTab('timetable', this)">
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <line x1="3" y1="9" x2="21" y2="9" />
+          <line x1="3" y1="15" x2="21" y2="15" />
+          <line x1="9" y1="3" x2="9" y2="21" />
+          <line x1="15" y1="3" x2="15" y2="21" />
+        </svg>
+        <span class="tab-label">Timetable</span>
+      </button>
+      <button class="nav-tab" onclick="switchTab('summary', this)">
+        <svg viewBox="0 0 24 24">
+          <line x1="8" y1="6" x2="21" y2="6" />
+          <line x1="8" y1="12" x2="21" y2="12" />
+          <line x1="8" y1="18" x2="21" y2="18" />
+          <circle cx="3" cy="6" r="1" fill="currentColor" stroke="none" />
+          <circle cx="3" cy="12" r="1" fill="currentColor" stroke="none" />
+          <circle cx="3" cy="18" r="1" fill="currentColor" stroke="none" />
+        </svg>
+        <span class="tab-label">Summary
+          <span id="course-count-badge" class="nav-badge" style="display: none">0</span></span>
+      </button>
+    </div>
+  </nav>
 
-      .result-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 12.5px;
-        min-width: 520px;
-      }
-
-      .result-table thead tr {
-        background: linear-gradient(
-          135deg,
-          rgba(0, 255, 249, 0.08),
-          rgba(157, 0, 255, 0.08)
-        );
-        border-bottom: 1px solid var(--border);
-      }
-
-      .result-table th {
-        color: var(--cyan);
-        padding: 10px 12px;
-        font-weight: 700;
-        text-align: left;
-        font-size: 11px;
-        white-space: nowrap;
-        font-family: "JetBrains Mono", monospace;
-        letter-spacing: 0.5px;
-      }
-
-      .result-table td {
-        padding: 9px 12px;
-        border-bottom: 1px solid rgba(42, 42, 61, 0.6);
-        color: var(--text);
-        font-size: 12.5px;
-      }
-
-      .result-table tbody tr:hover td {
-        background: rgba(0, 255, 249, 0.03);
-      }
-
-      .result-table tbody tr.conflict-row td {
-        background: rgba(255, 51, 51, 0.08);
-        border-left: 3px solid var(--red);
-      }
-
-      .result-table tfoot tr td {
-        background: linear-gradient(
-          135deg,
-          rgba(0, 255, 249, 0.06),
-          rgba(157, 0, 255, 0.06)
-        );
-        font-weight: 700;
-        font-size: 13px;
-        border-top: 2px solid var(--border);
-        color: var(--text);
-      }
-
-      .slot-pill {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 10px;
-        background: var(--cyan-dim);
-        color: var(--cyan);
-        padding: 2px 8px;
-        border-radius: var(--r-full);
-        border: 1px solid rgba(0, 255, 249, 0.2);
-        white-space: nowrap;
-        display: inline-block;
-      }
-
-      .conflict-row .slot-pill {
-        background: var(--red-dim);
-        color: var(--red);
-        border-color: rgba(255, 51, 51, 0.25);
-      }
-
-      /* ─── Alerts ─── */
-      .alert {
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
-        padding: 12px 15px;
-        border-radius: var(--r-md);
-        font-size: 13px;
-        font-weight: 500;
-        margin-top: 10px;
-      }
-
-      .alert svg {
-        width: 17px;
-        height: 17px;
-        flex-shrink: 0;
-        margin-top: 1px;
-        fill: none;
-        stroke: currentColor;
-        stroke-width: 2;
-      }
-
-      .alert-warn {
-        background: rgba(255, 102, 0, 0.1);
-        color: var(--orange);
-        border: 1px solid rgba(255, 102, 0, 0.3);
-      }
-
-      .alert-danger {
-        background: var(--red-dim);
-        color: var(--red);
-        border: 1px solid rgba(255, 51, 51, 0.3);
-      }
-
-      .alert-success {
-        background: var(--green-dim);
-        color: var(--green);
-        border: 1px solid rgba(0, 255, 102, 0.3);
-      }
-
-      /* ─── Actions Bar ─── */
-      .actions-bar {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-bottom: 16px;
-      }
-
-      /* ─── Toast ─── */
-      #toast {
-        position: fixed;
-        bottom: 28px;
-        left: 50%;
-        transform: translateX(-50%) translateY(80px);
-        background: linear-gradient(135deg, var(--surface2), var(--surface3));
-        border: 1px solid var(--cyan);
-        color: var(--cyan);
-        padding: 10px 22px;
-        border-radius: var(--r-full);
-        font-size: 13px;
-        font-weight: 600;
-        box-shadow:
-          0 0 30px var(--cyan-glow),
-          0 10px 40px rgba(0, 0, 0, 0.5);
-        transition: transform 0.25s ease;
-        z-index: 9999;
-        white-space: nowrap;
-        pointer-events: none;
-        font-family: "JetBrains Mono", monospace;
-      }
-
-      #toast.show {
-        transform: translateX(-50%) translateY(0);
-      }
-
-      #toast.warn {
-        border-color: var(--red);
-        color: var(--red);
-        box-shadow: 0 0 30px var(--red-glow);
-      }
-
-      #toast.ok {
-        border-color: var(--green);
-        color: var(--green);
-        box-shadow: 0 0 30px var(--green-glow);
-      }
-
-      /* ─── Responsive ─── */
-      @media (max-width: 768px) {
-        .header-right {
-          display: none;
-        }
-
-        .nav-tab {
-          padding: 12px 14px;
-          font-size: 12px;
-        }
-
-        .main-wrap {
-          padding: 12px 10px 80px;
-        }
-
-        .card {
-          padding: 14px;
-        }
-
-        .toggle-opt {
-          padding: 7px 16px;
-          font-size: 11px;
-        }
-
-        .btn {
-          padding: 9px 14px;
-          font-size: 12px;
-        }
-
-        .summary-stats {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-
-      @media (max-width: 480px) {
-        .brand-name {
-          font-size: 0.9rem;
-        }
-
-        .nav-tab .tab-label {
-          display: none;
-        }
-
-        .nav-tab {
-          padding: 12px 16px;
-        }
-
-        .btn-row {
-          flex-direction: column;
-        }
-
-        .btn {
-          justify-content: center;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="glow-orb glow-cyan"></div>
-    <div class="glow-orb glow-purple"></div>
-
-    <!-- ── Header ── -->
-    <header class="site-header">
-      <div class="header-inner">
-        <div class="brand">
-          <div class="brand-logo">⚡</div>
-          <div>
-            <div class="brand-name">FFCS-FAST</div>
-            <div class="brand-sub">VIT CHENNAI // TIMETABLE BUILDER</div>
+  <main class="main-wrap">
+    <!-- ════════════ ADD COURSE PANEL ════════════ -->
+    <div id="panel-add" class="panel active">
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
+          COURSE DETAILS
+        </div>
+        <div class="field-grid">
+          <div class="field">
+            <label for="inp-code">Course Code <span class="req">*</span></label>
+            <input type="text" id="inp-code" placeholder="e.g. BCSE205L" autocomplete="off"
+              oninput="this.value = this.value.toUpperCase()" />
+          </div>
+          <div class="field">
+            <label for="inp-name">Course Name</label>
+            <input type="text" id="inp-name" placeholder="e.g. Data Structures" />
           </div>
         </div>
-        <div class="header-right">
-          <span>FULLY FLEXIBLE CREDIT SYSTEM</span>
-          <span class="hd-sep">│</span>
-          <div class="storage-indicator">
-            <span class="dot"></span>
-            <span id="storage-status">AUTO-SAVED</span>
+        <div class="field-grid three">
+          <div class="field">
+            <label for="inp-faculty">Faculty</label>
+            <input type="text" id="inp-faculty" placeholder="Dr. Ramesh Kumar" />
+          </div>
+          <div class="field">
+            <label for="inp-room">Room No</label>
+            <input type="text" id="inp-room" placeholder="AB-4 303" />
+          </div>
+          <div class="field">
+            <label for="inp-credits">Credits</label>
+            <input type="number" id="inp-credits" placeholder="4" min="1" max="10" />
           </div>
         </div>
       </div>
-    </header>
 
-    <!-- ── Nav ── -->
-    <nav class="nav-bar">
-      <div class="nav-inner">
-        <button class="nav-tab active" onclick="switchTab('add', this)">
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+          </svg>
+          SELECT SLOT
+        </div>
+
+        <div class="slot-toggle-wrap">
+          <div class="slot-toggle">
+            <button class="toggle-opt theory-on" id="btn-theory-toggle" onclick="showSlotPane('theory')">
+              <svg viewBox="0 0 24 24">
+                <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" />
+                <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" />
+              </svg>
+              THEORY
+            </button>
+            <button class="toggle-opt" id="btn-lab-toggle" onclick="showSlotPane('lab')">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
+              </svg>
+              LAB
+            </button>
+          </div>
+          <span id="selected-slot-display" class="selected-slot-display"></span>
+        </div>
+
+        <!-- Theory pane -->
+        <div class="slot-pane active" id="pane-theory">
+          <div class="slot-group">
+            <div class="slot-group-label">// Single Theory Slot</div>
+            <div class="slot-buttons" id="sg-theory-single"></div>
+          </div>
+          <div class="slot-group">
+            <div class="slot-group-label">// Theory + Tutorial (A1+TA1)</div>
+            <div class="slot-buttons" id="sg-theory-tut1"></div>
+          </div>
+          <div class="slot-group">
+            <div class="slot-group-label">
+              // Theory + 2 Tutorials (A1+TA1+TAA1)
+            </div>
+            <div class="slot-buttons" id="sg-theory-tut2"></div>
+          </div>
+          <div class="slot-group">
+            <div class="slot-group-label">// Special Slots</div>
+            <div class="slot-buttons" id="sg-theory-special"></div>
+          </div>
+        </div>
+
+        <!-- Lab pane -->
+        <div class="slot-pane lab-pane" id="pane-lab">
+          <div class="slot-group">
+            <div class="slot-group-label">// Morning Lab Pairs</div>
+            <div class="slot-buttons" id="sg-lab-morning"></div>
+          </div>
+          <div class="slot-group">
+            <div class="slot-group-label">// Afternoon Lab Pairs</div>
+            <div class="slot-buttons" id="sg-lab-afternoon"></div>
+          </div>
+        </div>
+
+        <p style="
+              font-size: 11px;
+              color: var(--text3);
+              margin-top: 10px;
+              font-family: &quot;JetBrains Mono&quot;, monospace;
+            ">
+          &gt; tap a slot to select · only one combo per course
+        </p>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn primary" onclick="addCourse()">
           <svg viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="10" />
             <line x1="12" y1="8" x2="12" y2="16" />
             <line x1="8" y1="12" x2="16" y2="12" />
           </svg>
-          <span class="tab-label">Add Course</span>
+          Add Course
         </button>
-        <button class="nav-tab" onclick="switchTab('timetable', this)">
+        <button class="btn" onclick="clearForm()">
           <svg viewBox="0 0 24 24">
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <line x1="3" y1="9" x2="21" y2="9" />
-            <line x1="3" y1="15" x2="21" y2="15" />
-            <line x1="9" y1="3" x2="9" y2="21" />
-            <line x1="15" y1="3" x2="15" y2="21" />
+            <polyline points="1 4 1 10 7 10" />
+            <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
           </svg>
-          <span class="tab-label">Timetable</span>
-        </button>
-        <button class="nav-tab" onclick="switchTab('summary', this)">
-          <svg viewBox="0 0 24 24">
-            <line x1="8" y1="6" x2="21" y2="6" />
-            <line x1="8" y1="12" x2="21" y2="12" />
-            <line x1="8" y1="18" x2="21" y2="18" />
-            <circle cx="3" cy="6" r="1" fill="currentColor" stroke="none" />
-            <circle cx="3" cy="12" r="1" fill="currentColor" stroke="none" />
-            <circle cx="3" cy="18" r="1" fill="currentColor" stroke="none" />
-          </svg>
-          <span class="tab-label"
-            >Summary
-            <span
-              id="course-count-badge"
-              class="nav-badge"
-              style="display: none"
-              >0</span
-            ></span
-          >
+          Clear
         </button>
       </div>
-    </nav>
 
-    <main class="main-wrap">
-      <!-- ════════════ ADD COURSE PANEL ════════════ -->
-      <div id="panel-add" class="panel active">
-        <div class="card">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-            </svg>
-            COURSE DETAILS
-          </div>
-          <div class="field-grid">
-            <div class="field">
-              <label for="inp-code"
-                >Course Code <span class="req">*</span></label
-              >
-              <input
-                type="text"
-                id="inp-code"
-                placeholder="e.g. BCSE205L"
-                autocomplete="off"
-                oninput="this.value = this.value.toUpperCase()"
-              />
-            </div>
-            <div class="field">
-              <label for="inp-name">Course Name</label>
-              <input
-                type="text"
-                id="inp-name"
-                placeholder="e.g. Data Structures"
-              />
-            </div>
-          </div>
-          <div class="field-grid three">
-            <div class="field">
-              <label for="inp-faculty">Faculty</label>
-              <input
-                type="text"
-                id="inp-faculty"
-                placeholder="Dr. Ramesh Kumar"
-              />
-            </div>
-            <div class="field">
-              <label for="inp-room">Room No</label>
-              <input type="text" id="inp-room" placeholder="AB-4 303" />
-            </div>
-            <div class="field">
-              <label for="inp-credits">Credits</label>
-              <input
-                type="number"
-                id="inp-credits"
-                placeholder="4"
-                min="1"
-                max="10"
-              />
-            </div>
-          </div>
-        </div>
+      <div id="courses-list-container"></div>
+    </div>
 
-        <div class="card">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-            </svg>
-            SELECT SLOT
-          </div>
-
-          <div class="slot-toggle-wrap">
-            <div class="slot-toggle">
-              <button
-                class="toggle-opt theory-on"
-                id="btn-theory-toggle"
-                onclick="showSlotPane('theory')"
-              >
-                <svg viewBox="0 0 24 24">
-                  <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" />
-                  <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" />
-                </svg>
-                THEORY
-              </button>
-              <button
-                class="toggle-opt"
-                id="btn-lab-toggle"
-                onclick="showSlotPane('lab')"
-              >
-                <svg viewBox="0 0 24 24">
-                  <path
-                    d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"
-                  />
-                </svg>
-                LAB
-              </button>
-            </div>
-            <span
-              id="selected-slot-display"
-              class="selected-slot-display"
-            ></span>
-          </div>
-
-          <!-- Theory pane -->
-          <div class="slot-pane active" id="pane-theory">
-            <div class="slot-group">
-              <div class="slot-group-label">// Single Theory Slot</div>
-              <div class="slot-buttons" id="sg-theory-single"></div>
-            </div>
-            <div class="slot-group">
-              <div class="slot-group-label">// Theory + Tutorial (A1+TA1)</div>
-              <div class="slot-buttons" id="sg-theory-tut1"></div>
-            </div>
-            <div class="slot-group">
-              <div class="slot-group-label">
-                // Theory + 2 Tutorials (A1+TA1+TAA1)
-              </div>
-              <div class="slot-buttons" id="sg-theory-tut2"></div>
-            </div>
-            <div class="slot-group">
-              <div class="slot-group-label">// Special Slots</div>
-              <div class="slot-buttons" id="sg-theory-special"></div>
-            </div>
-          </div>
-
-          <!-- Lab pane -->
-          <div class="slot-pane lab-pane" id="pane-lab">
-            <div class="slot-group">
-              <div class="slot-group-label">// Morning Lab Pairs</div>
-              <div class="slot-buttons" id="sg-lab-morning"></div>
-            </div>
-            <div class="slot-group">
-              <div class="slot-group-label">// Afternoon Lab Pairs</div>
-              <div class="slot-buttons" id="sg-lab-afternoon"></div>
-            </div>
-          </div>
-
-          <p
-            style="
-              font-size: 11px;
-              color: var(--text3);
-              margin-top: 10px;
-              font-family: &quot;JetBrains Mono&quot;, monospace;
-            "
-          >
-            &gt; tap a slot to select · only one combo per course
-          </p>
-        </div>
-
-        <div class="btn-row">
-          <button class="btn primary" onclick="addCourse()">
-            <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="16" />
-              <line x1="8" y1="12" x2="16" y2="12" />
-            </svg>
-            Add Course
-          </button>
-          <button class="btn" onclick="clearForm()">
-            <svg viewBox="0 0 24 24">
-              <polyline points="1 4 1 10 7 10" />
-              <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
-            </svg>
-            Clear
-          </button>
-        </div>
-
-        <div id="courses-list-container"></div>
-      </div>
-
-      <!-- ════════════ TIMETABLE PANEL ════════════ -->
-      <div id="panel-timetable" class="panel">
-        <div
-          style="
+    <!-- ════════════ TIMETABLE PANEL ════════════ -->
+    <div id="panel-timetable" class="panel">
+      <div style="
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 12px;
-          "
-        >
-          <span
-            style="
+          ">
+        <span style="
               font-family: &quot;JetBrains Mono&quot;, monospace;
               font-size: 11px;
               color: var(--text3);
-            "
-            >&gt; scroll horizontally on narrow screens</span
-          >
-          <button class="btn success-soft" onclick="downloadTimetable()">
-            <svg viewBox="0 0 24 24">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            Export
-          </button>
-        </div>
-        <div id="tt-container"></div>
+            ">&gt; scroll horizontally on narrow screens</span>
+        <button class="btn success-soft" onclick="downloadTimetable()">
+          <svg viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Export
+        </button>
       </div>
+      <div id="tt-container"></div>
+    </div>
 
-      <!-- ════════════ SUMMARY PANEL ════════════ -->
-      <div id="panel-summary" class="panel">
-        <div class="actions-bar">
-          <button class="btn primary" onclick="downloadTimetable()">
-            <svg viewBox="0 0 24 24">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            Download
-          </button>
-          <button class="btn" onclick="copyToClipboard()">
-            <svg viewBox="0 0 24 24">
-              <rect x="9" y="9" width="13" height="13" rx="2" />
-              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-            </svg>
-            Copy
-          </button>
-          <button class="btn danger-soft" onclick="clearAll()">
-            <svg viewBox="0 0 24 24">
-              <polyline points="3 6 5 6 21 6" />
-              <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-              <path d="M10 11v6M14 11v6" />
-              <path d="M9 6V4h6v2" />
-            </svg>
-            Clear All
-          </button>
-        </div>
-        <div id="summary-container"></div>
+    <!-- ════════════ SUMMARY PANEL ════════════ -->
+    <div id="panel-summary" class="panel">
+      <div class="actions-bar">
+        <button class="btn primary" onclick="downloadTimetable()">
+          <svg viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Download
+        </button>
+        <button class="btn" onclick="copyToClipboard()">
+          <svg viewBox="0 0 24 24">
+            <rect x="9" y="9" width="13" height="13" rx="2" />
+            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+          </svg>
+          Copy
+        </button>
+        <button class="btn danger-soft" onclick="clearAll()">
+          <svg viewBox="0 0 24 24">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+            <path d="M10 11v6M14 11v6" />
+            <path d="M9 6V4h6v2" />
+          </svg>
+          Clear All
+        </button>
       </div>
-    </main>
+      <div id="summary-container"></div>
+    </div>
+  </main>
 
-    <div id="toast"></div>
+  <!-- Footer -->
+  <footer class="site-footer">
+    Built with ⚡ by <a href="https://github.com/meijeevan" target="_blank">Meijeevan K.T</a> ·
+    <a href="https://github.com/meijeevan/ffcs-fast" target="_blank">View on GitHub</a>
+  </footer>
 
-    <script>
-      /* ═══════════════════════════════════════════
-       DATA
-    ═══════════════════════════════════════════ */
-      const THEORY_TIMES = [
-        "8:00",
-        "8:55",
-        "9:50",
-        "10:45",
-        "11:40",
-        "12:35",
+  <div id="toast"></div>
+
+  <script>
+    /* ═══════════════════════════════════════════
+     DATA
+  ═══════════════════════════════════════════ */
+    const THEORY_TIMES = [
+      "8:00",
+      "8:55",
+      "9:50",
+      "10:45",
+      "11:40",
+      "12:35",
+      "LUNCH",
+      "14:00",
+      "14:55",
+      "15:50",
+      "16:45",
+      "17:40",
+      "18:35",
+    ];
+    const THEORY_TIMES_END = [
+      "8:50",
+      "9:45",
+      "10:40",
+      "11:35",
+      "12:30",
+      "13:25",
+      "LUNCH",
+      "14:50",
+      "15:45",
+      "16:40",
+      "17:35",
+      "18:30",
+      "19:25",
+    ];
+    const LAB_TIMES = [
+      "8:00",
+      "8:50",
+      "9:50",
+      "10:40",
+      "11:40",
+      "12:30",
+      "LUNCH",
+      "14:00",
+      "14:50",
+      "15:50",
+      "16:40",
+      "17:40",
+      "18:30",
+    ];
+    const LAB_TIMES_END = [
+      "8:50",
+      "9:40",
+      "10:40",
+      "11:30",
+      "12:30",
+      "13:20",
+      "LUNCH",
+      "14:50",
+      "15:40",
+      "16:40",
+      "17:30",
+      "18:30",
+      "19:20",
+    ];
+    const DAYS = ["MON", "TUE", "WED", "THU", "FRI"];
+
+    const THEORY_BLOCKS = {
+      MON: [
+        "A1",
+        "F1",
+        "D1",
+        "TB1",
+        "TG1",
+        "S11",
         "LUNCH",
-        "14:00",
-        "14:55",
-        "15:50",
-        "16:45",
-        "17:40",
-        "18:35",
-      ];
-      const THEORY_TIMES_END = [
-        "8:50",
-        "9:45",
-        "10:40",
-        "11:35",
-        "12:30",
-        "13:25",
+        "A2",
+        "F2",
+        "D2",
+        "TB2",
+        "TG2",
+        "S3",
+      ],
+      TUE: [
+        "B1",
+        "G1",
+        "E1",
+        "TC1",
+        "TAA1",
+        "-",
         "LUNCH",
-        "14:50",
-        "15:45",
-        "16:40",
-        "17:35",
-        "18:30",
-        "19:25",
-      ];
-      const LAB_TIMES = [
-        "8:00",
-        "8:50",
-        "9:50",
-        "10:40",
-        "11:40",
-        "12:30",
+        "B2",
+        "G2",
+        "E2",
+        "TC2",
+        "TAA2",
+        "S1",
+      ],
+      WED: [
+        "C1",
+        "A1",
+        "F1",
+        "TD1",
+        "TBB1",
+        "-",
         "LUNCH",
-        "14:00",
-        "14:50",
-        "15:50",
-        "16:40",
-        "17:40",
-        "18:30",
-      ];
-      const LAB_TIMES_END = [
-        "8:50",
-        "9:40",
-        "10:40",
-        "11:30",
-        "12:30",
-        "13:20",
+        "C2",
+        "A2",
+        "F2",
+        "TD2",
+        "TBB2",
+        "S4",
+      ],
+      THU: [
+        "D1",
+        "B1",
+        "G1",
+        "TE1",
+        "TCC1",
+        "-",
         "LUNCH",
-        "14:50",
-        "15:40",
-        "16:40",
-        "17:30",
-        "18:30",
-        "19:20",
-      ];
-      const DAYS = ["MON", "TUE", "WED", "THU", "FRI"];
+        "D2",
+        "B2",
+        "G2",
+        "TE2",
+        "TCC2",
+        "S2",
+      ],
+      FRI: [
+        "E1",
+        "C1",
+        "TA1",
+        "TF1",
+        "TDD1",
+        "S15",
+        "LUNCH",
+        "E2",
+        "C2",
+        "TA2",
+        "TF2",
+        "TDD2",
+        "-",
+      ],
+    };
+    const LAB_BLOCKS = {
+      MON: [
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L5",
+        "L6",
+        "LUNCH",
+        "L31",
+        "L32",
+        "L33",
+        "L34",
+        "L35",
+        "L36",
+      ],
+      TUE: [
+        "L7",
+        "L8",
+        "L9",
+        "L10",
+        "L11",
+        "L12",
+        "LUNCH",
+        "L37",
+        "L38",
+        "L39",
+        "L40",
+        "L41",
+        "L42",
+      ],
+      WED: [
+        "L13",
+        "L14",
+        "L15",
+        "L16",
+        "L17",
+        "L18",
+        "LUNCH",
+        "L43",
+        "L44",
+        "L45",
+        "L46",
+        "L47",
+        "L48",
+      ],
+      THU: [
+        "L19",
+        "L20",
+        "L21",
+        "L22",
+        "L23",
+        "L24",
+        "LUNCH",
+        "L49",
+        "L50",
+        "L51",
+        "L52",
+        "L53",
+        "L54",
+      ],
+      FRI: [
+        "L25",
+        "L26",
+        "L27",
+        "L28",
+        "L29",
+        "L30",
+        "LUNCH",
+        "L55",
+        "L56",
+        "L57",
+        "L58",
+        "L59",
+        "L60",
+      ],
+    };
+    const THEORY_GROUPS = {
+      single: [
+        ["A1"],
+        ["B1"],
+        ["C1"],
+        ["D1"],
+        ["E1"],
+        ["F1"],
+        ["G1"],
+        ["A2"],
+        ["B2"],
+        ["C2"],
+        ["D2"],
+        ["E2"],
+        ["F2"],
+        ["G2"],
+      ],
+      tut1: [
+        ["A1", "TA1"],
+        ["B1", "TB1"],
+        ["C1", "TC1"],
+        ["D1", "TD1"],
+        ["E1", "TE1"],
+        ["F1", "TF1"],
+        ["G1", "TG1"],
+        ["A2", "TA2"],
+        ["B2", "TB2"],
+        ["C2", "TC2"],
+        ["D2", "TD2"],
+        ["E2", "TE2"],
+        ["F2", "TF2"],
+        ["G2", "TG2"],
+      ],
+      tut2: [
+        ["A1", "TA1", "TAA1"],
+        ["B1", "TB1", "TBB1"],
+        ["C1", "TC1", "TCC1"],
+        ["D1", "TD1", "TDD1"],
+        ["E1", "TE1"],
+        ["F1", "TF1"],
+        ["A2", "TA2", "TAA2"],
+        ["B2", "TB2", "TBB2"],
+        ["C2", "TC2", "TCC2"],
+        ["D2", "TD2", "TDD2"],
+      ],
+      special: [["S1"], ["S2"], ["S3"], ["S4"], ["S11"], ["S15"]],
+    };
+    const LAB_GROUPS = {
+      morning: [
+        ["L1", "L2"],
+        ["L3", "L4"],
+        ["L5", "L6"],
+        ["L7", "L8"],
+        ["L9", "L10"],
+        ["L11", "L12"],
+        ["L13", "L14"],
+        ["L15", "L16"],
+        ["L17", "L18"],
+        ["L19", "L20"],
+        ["L21", "L22"],
+        ["L23", "L24"],
+        ["L25", "L26"],
+        ["L27", "L28"],
+        ["L29", "L30"],
+      ],
+      afternoon: [
+        ["L31", "L32"],
+        ["L33", "L34"],
+        ["L35", "L36"],
+        ["L37", "L38"],
+        ["L39", "L40"],
+        ["L41", "L42"],
+        ["L43", "L44"],
+        ["L45", "L46"],
+        ["L47", "L48"],
+        ["L49", "L50"],
+        ["L51", "L52"],
+        ["L53", "L54"],
+        ["L55", "L56"],
+        ["L57", "L58"],
+        ["L59", "L60"],
+      ],
+    };
 
-      const THEORY_BLOCKS = {
-        MON: [
-          "A1",
-          "F1",
-          "D1",
-          "TB1",
-          "TG1",
-          "S11",
-          "LUNCH",
-          "A2",
-          "F2",
-          "D2",
-          "TB2",
-          "TG2",
-          "S3",
-        ],
-        TUE: [
-          "B1",
-          "G1",
-          "E1",
-          "TC1",
-          "TAA1",
-          "-",
-          "LUNCH",
-          "B2",
-          "G2",
-          "E2",
-          "TC2",
-          "TAA2",
-          "S1",
-        ],
-        WED: [
-          "C1",
-          "A1",
-          "F1",
-          "TD1",
-          "TBB1",
-          "-",
-          "LUNCH",
-          "C2",
-          "A2",
-          "F2",
-          "TD2",
-          "TBB2",
-          "S4",
-        ],
-        THU: [
-          "D1",
-          "B1",
-          "G1",
-          "TE1",
-          "TCC1",
-          "-",
-          "LUNCH",
-          "D2",
-          "B2",
-          "G2",
-          "TE2",
-          "TCC2",
-          "S2",
-        ],
-        FRI: [
-          "E1",
-          "C1",
-          "TA1",
-          "TF1",
-          "TDD1",
-          "S15",
-          "LUNCH",
-          "E2",
-          "C2",
-          "TA2",
-          "TF2",
-          "TDD2",
-          "-",
-        ],
+    /* ═══════════════════════════════════════════
+     LOCAL STORAGE
+  ═══════════════════════════════════════════ */
+    const LS_KEY = "ffcs-cyber-v1-courses";
+
+    function lsSave() {
+      try {
+        localStorage.setItem(LS_KEY, JSON.stringify(courses));
+        const el = document.getElementById("storage-status");
+        if (el) {
+          el.textContent = "SAVED ✓";
+          setTimeout(() => {
+            el.textContent = "AUTO-SAVED";
+          }, 1200);
+        }
+      } catch (e) {
+        console.warn("localStorage unavailable", e);
+      }
+    }
+
+    function lsLoad() {
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed))
+            return parsed.map((c) => ({...c, hasConflict: false}));
+        }
+      } catch (e) {
+        console.warn("Failed to load from localStorage", e);
+      }
+      return [];
+    }
+
+    /* ═══════════════════════════════════════════
+     STATE
+  ═══════════════════════════════════════════ */
+    let courses = [];
+    let selectedSlots = [];
+    let currentPane = "theory";
+    let editingCourseId = null;
+
+    /* ═══════════════════════════════════════════
+     INIT
+  ═══════════════════════════════════════════ */
+    function init() {
+      buildSlotButtons("sg-theory-single", THEORY_GROUPS.single, false);
+      buildSlotButtons("sg-theory-tut1", THEORY_GROUPS.tut1, false);
+      buildSlotButtons("sg-theory-tut2", THEORY_GROUPS.tut2, false);
+      buildSlotButtons("sg-theory-special", THEORY_GROUPS.special, false);
+      buildSlotButtons("sg-lab-morning", LAB_GROUPS.morning, true);
+      buildSlotButtons("sg-lab-afternoon", LAB_GROUPS.afternoon, true);
+
+      courses = lsLoad();
+      recalcConflicts();
+      renderCoursesList();
+      updateBadge();
+
+      if (courses.length) {
+        showToast("✓ " + courses.length + " course(s) restored", "ok");
+      }
+    }
+
+    function buildSlotButtons(containerId, groups, isLab) {
+      const cont = document.getElementById(containerId);
+      groups.forEach((combo) => {
+        const btn = document.createElement("button");
+        btn.className = "slot-btn";
+        btn.textContent = combo.join(" + ");
+        btn.dataset.slots = JSON.stringify(combo);
+        btn.addEventListener("click", () => selectSlot(btn, combo));
+        cont.appendChild(btn);
+      });
+    }
+
+    /* ═══════════════════════════════════════════
+     TAB NAVIGATION
+  ═══════════════════════════════════════════ */
+    function switchTab(name, el) {
+      document
+        .querySelectorAll(".nav-tab")
+        .forEach((t) => t.classList.remove("active"));
+      document
+        .querySelectorAll(".panel")
+        .forEach((p) => p.classList.remove("active"));
+      el.classList.add("active");
+      document.getElementById("panel-" + name).classList.add("active");
+      if (name === "timetable") renderTimetable();
+      if (name === "summary") renderSummary();
+    }
+
+    /* ═══════════════════════════════════════════
+     SLOT PANE TOGGLE
+  ═══════════════════════════════════════════ */
+    function showSlotPane(pane) {
+      currentPane = pane;
+      document
+        .getElementById("pane-theory")
+        .classList.toggle("active", pane === "theory");
+      document
+        .getElementById("pane-lab")
+        .classList.toggle("active", pane === "lab");
+      const tBtn = document.getElementById("btn-theory-toggle");
+      const lBtn = document.getElementById("btn-lab-toggle");
+      tBtn.classList.toggle("theory-on", pane === "theory");
+      tBtn.classList.toggle("lab-on", false);
+      lBtn.classList.toggle("lab-on", pane === "lab");
+      lBtn.classList.toggle("theory-on", false);
+      selectedSlots = [];
+      document
+        .querySelectorAll(".slot-btn")
+        .forEach((b) => b.classList.remove("selected"));
+      updateSelectedDisplay();
+    }
+
+    /* ═══════════════════════════════════════════
+     SLOT SELECTION
+  ═══════════════════════════════════════════ */
+    function selectSlot(btn, combo) {
+      document
+        .querySelectorAll(".slot-btn")
+        .forEach((b) => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      selectedSlots = combo;
+      updateSelectedDisplay();
+    }
+
+    function updateSelectedDisplay() {
+      const el = document.getElementById("selected-slot-display");
+      if (selectedSlots.length) {
+        el.textContent = "> " + selectedSlots.join(" + ");
+        el.classList.add("visible");
+        el.classList.toggle("lab-mode", currentPane === "lab");
+      } else {
+        el.classList.remove("visible");
+      }
+    }
+
+    /* ═══════════════════════════════════════════
+     COURSE MANAGEMENT
+  ═══════════════════════════════════════════ */
+    function getUsedSlotsMap() {
+      const map = {};
+      courses.forEach((c) =>
+        c.slots.forEach((s) => {
+          if (!map[s]) map[s] = [];
+          map[s].push(c.id);
+        }),
+      );
+      return map;
+    }
+
+    function buildTimeOverlapSet() {
+      const overlaps = new Set();
+      DAYS.forEach((day) => {
+        const tBlocks = THEORY_BLOCKS[day];
+        const lBlocks = LAB_BLOCKS[day];
+
+        for (let raw = 0; raw < 6; raw++) {
+          if (tBlocks[raw] === "-" || lBlocks[raw] === "-") continue;
+          const tCourse = getCourseForBlock(tBlocks[raw]);
+          const lCourse = getCourseForBlock(lBlocks[raw]);
+          if (tCourse && lCourse) overlaps.add(day + ":" + raw);
+        }
+
+        for (let raw = 7; raw < 13; raw++) {
+          if (tBlocks[raw] === "-" || lBlocks[raw] === "-") continue;
+          const tCourse = getCourseForBlock(tBlocks[raw]);
+          const lCourse = getCourseForBlock(lBlocks[raw]);
+          if (tCourse && lCourse) overlaps.add(day + ":" + raw);
+        }
+      });
+      return overlaps;
+    }
+
+    function recalcConflicts() {
+      const map = getUsedSlotsMap();
+      const overlaps = buildTimeOverlapSet();
+
+      const overlapBlocks = new Set();
+      DAYS.forEach((day) => {
+        const tBlocks = THEORY_BLOCKS[day];
+        const lBlocks = LAB_BLOCKS[day];
+        for (let raw = 0; raw < tBlocks.length; raw++) {
+          if (overlaps.has(day + ":" + raw)) {
+            if (tBlocks[raw] !== "LUNCH" && tBlocks[raw] !== "-")
+              overlapBlocks.add(tBlocks[raw]);
+            if (lBlocks[raw] !== "LUNCH" && lBlocks[raw] !== "-")
+              overlapBlocks.add(lBlocks[raw]);
+          }
+        }
+      });
+
+      courses.forEach((c) => {
+        const dup = c.slots.some((s) => map[s] && map[s].length > 1);
+        const time = c.slots.some((s) => overlapBlocks.has(s));
+        c.hasConflict = dup || time;
+      });
+    }
+
+    function addCourse() {
+      const code = document
+        .getElementById("inp-code")
+        .value.trim()
+        .toUpperCase();
+      if (!code) {
+        showToast("⚠ Course code required", "warn");
+        return;
+      }
+      if (!selectedSlots.length) {
+        showToast("⚠ Select a slot first", "warn");
+        return;
+      }
+
+      const course = {
+        id: Date.now(),
+        code,
+        name: document.getElementById("inp-name").value.trim(),
+        faculty: document.getElementById("inp-faculty").value.trim(),
+        room: document.getElementById("inp-room").value.trim(),
+        credits: parseInt(document.getElementById("inp-credits").value) || 0,
+        slots: [...selectedSlots],
+        hasConflict: false,
       };
-      const LAB_BLOCKS = {
-        MON: [
-          "L1",
-          "L2",
-          "L3",
-          "L4",
-          "L5",
-          "L6",
-          "LUNCH",
-          "L31",
-          "L32",
-          "L33",
-          "L34",
-          "L35",
-          "L36",
-        ],
-        TUE: [
-          "L7",
-          "L8",
-          "L9",
-          "L10",
-          "L11",
-          "L12",
-          "LUNCH",
-          "L37",
-          "L38",
-          "L39",
-          "L40",
-          "L41",
-          "L42",
-        ],
-        WED: [
-          "L13",
-          "L14",
-          "L15",
-          "L16",
-          "L17",
-          "L18",
-          "LUNCH",
-          "L43",
-          "L44",
-          "L45",
-          "L46",
-          "L47",
-          "L48",
-        ],
-        THU: [
-          "L19",
-          "L20",
-          "L21",
-          "L22",
-          "L23",
-          "L24",
-          "LUNCH",
-          "L49",
-          "L50",
-          "L51",
-          "L52",
-          "L53",
-          "L54",
-        ],
-        FRI: [
-          "L25",
-          "L26",
-          "L27",
-          "L28",
-          "L29",
-          "L30",
-          "LUNCH",
-          "L55",
-          "L56",
-          "L57",
-          "L58",
-          "L59",
-          "L60",
-        ],
-      };
-      const THEORY_GROUPS = {
-        single: [
-          ["A1"],
-          ["B1"],
-          ["C1"],
-          ["D1"],
-          ["E1"],
-          ["F1"],
-          ["G1"],
-          ["A2"],
-          ["B2"],
-          ["C2"],
-          ["D2"],
-          ["E2"],
-          ["F2"],
-          ["G2"],
-        ],
-        tut1: [
-          ["A1", "TA1"],
-          ["B1", "TB1"],
-          ["C1", "TC1"],
-          ["D1", "TD1"],
-          ["E1", "TE1"],
-          ["F1", "TF1"],
-          ["G1", "TG1"],
-          ["A2", "TA2"],
-          ["B2", "TB2"],
-          ["C2", "TC2"],
-          ["D2", "TD2"],
-          ["E2", "TE2"],
-          ["F2", "TF2"],
-          ["G2", "TG2"],
-        ],
-        tut2: [
-          ["A1", "TA1", "TAA1"],
-          ["B1", "TB1", "TBB1"],
-          ["C1", "TC1", "TCC1"],
-          ["D1", "TD1", "TDD1"],
-          ["E1", "TE1"],
-          ["F1", "TF1"],
-          ["A2", "TA2", "TAA2"],
-          ["B2", "TB2", "TBB2"],
-          ["C2", "TC2", "TCC2"],
-          ["D2", "TD2", "TDD2"],
-        ],
-        special: [["S1"], ["S2"], ["S3"], ["S4"], ["S11"], ["S15"]],
-      };
-      const LAB_GROUPS = {
-        morning: [
-          ["L1", "L2"],
-          ["L3", "L4"],
-          ["L5", "L6"],
-          ["L7", "L8"],
-          ["L9", "L10"],
-          ["L11", "L12"],
-          ["L13", "L14"],
-          ["L15", "L16"],
-          ["L17", "L18"],
-          ["L19", "L20"],
-          ["L21", "L22"],
-          ["L23", "L24"],
-          ["L25", "L26"],
-          ["L27", "L28"],
-          ["L29", "L30"],
-        ],
-        afternoon: [
-          ["L31", "L32"],
-          ["L33", "L34"],
-          ["L35", "L36"],
-          ["L37", "L38"],
-          ["L39", "L40"],
-          ["L41", "L42"],
-          ["L43", "L44"],
-          ["L45", "L46"],
-          ["L47", "L48"],
-          ["L49", "L50"],
-          ["L51", "L52"],
-          ["L53", "L54"],
-          ["L55", "L56"],
-          ["L57", "L58"],
-          ["L59", "L60"],
-        ],
-      };
+      courses.push(course);
+      recalcConflicts();
+      lsSave();
+      clearForm();
+      renderCoursesList();
+      updateBadge();
+      if (course.hasConflict) {
+        showToast("⚡ " + code + " added — time clash!", "warn");
+      } else {
+        showToast("✓ " + code + " added", "ok");
+      }
+    }
 
-      /* ═══════════════════════════════════════════
-       LOCAL STORAGE
-    ═══════════════════════════════════════════ */
-      const LS_KEY = "ffcs-cyber-v1-courses";
+    function deleteCourse(id) {
+      courses = courses.filter((c) => c.id !== id);
+      recalcConflicts();
+      lsSave();
+      renderCoursesList();
+      renderSummary();
+      updateBadge();
+      showToast("✓ Course removed", "ok");
+    }
 
-      function lsSave() {
-        try {
-          localStorage.setItem(LS_KEY, JSON.stringify(courses));
-          const el = document.getElementById("storage-status");
-          if (el) {
-            el.textContent = "SAVED ✓";
-            setTimeout(() => {
-              el.textContent = "AUTO-SAVED";
-            }, 1200);
-          }
-        } catch (e) {
-          console.warn("localStorage unavailable", e);
-        }
+    function startEditCourse(id) {
+      editingCourseId = id;
+      renderSummary();
+    }
+
+    function cancelEditCourse() {
+      editingCourseId = null;
+      renderSummary();
+    }
+
+    function saveEditCourse(id) {
+      const course = courses.find((c) => c.id === id);
+      if (!course) return;
+
+      const codeEl = document.getElementById("edit-code-" + id);
+      const nameEl = document.getElementById("edit-name-" + id);
+      const facultyEl = document.getElementById("edit-faculty-" + id);
+      const roomEl = document.getElementById("edit-room-" + id);
+      const creditsEl = document.getElementById("edit-credits-" + id);
+
+      if (!codeEl.value.trim()) {
+        showToast("⚠ Course code required", "warn");
+        return;
       }
 
-      function lsLoad() {
-        try {
-          const raw = localStorage.getItem(LS_KEY);
-          if (raw) {
-            const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed))
-              return parsed.map((c) => ({ ...c, hasConflict: false }));
-          }
-        } catch (e) {
-          console.warn("Failed to load from localStorage", e);
-        }
-        return [];
+      course.code = codeEl.value.trim().toUpperCase();
+      course.name = nameEl.value.trim();
+      course.faculty = facultyEl.value.trim();
+      course.room = roomEl.value.trim();
+      course.credits = parseInt(creditsEl.value) || 0;
+
+      recalcConflicts();
+      lsSave();
+      editingCourseId = null;
+      renderCoursesList();
+      renderSummary();
+      updateBadge();
+      showToast("✓ Course updated", "ok");
+    }
+
+    function clearForm() {
+      [
+        "inp-code",
+        "inp-name",
+        "inp-faculty",
+        "inp-room",
+        "inp-credits",
+      ].forEach((id) => (document.getElementById(id).value = ""));
+      selectedSlots = [];
+      document
+        .querySelectorAll(".slot-btn")
+        .forEach((b) => b.classList.remove("selected"));
+      updateSelectedDisplay();
+    }
+
+    function clearAll() {
+      if (!courses.length) {
+        showToast("⚠ No courses to clear", "warn");
+        return;
       }
-
-      /* ═══════════════════════════════════════════
-       STATE
-    ═══════════════════════════════════════════ */
-      let courses = [];
-      let selectedSlots = [];
-      let currentPane = "theory";
-
-      /* ═══════════════════════════════════════════
-       INIT
-    ═══════════════════════════════════════════ */
-      function init() {
-        buildSlotButtons("sg-theory-single", THEORY_GROUPS.single, false);
-        buildSlotButtons("sg-theory-tut1", THEORY_GROUPS.tut1, false);
-        buildSlotButtons("sg-theory-tut2", THEORY_GROUPS.tut2, false);
-        buildSlotButtons("sg-theory-special", THEORY_GROUPS.special, false);
-        buildSlotButtons("sg-lab-morning", LAB_GROUPS.morning, true);
-        buildSlotButtons("sg-lab-afternoon", LAB_GROUPS.afternoon, true);
-
-        // Load persisted courses
-        courses = lsLoad();
-        recalcConflicts();
-        renderCoursesList();
-        updateBadge();
-
-        if (courses.length) {
-          showToast("✓ " + courses.length + " course(s) restored", "ok");
-        }
-      }
-
-      function buildSlotButtons(containerId, groups, isLab) {
-        const cont = document.getElementById(containerId);
-        groups.forEach((combo) => {
-          const btn = document.createElement("button");
-          btn.className = "slot-btn";
-          btn.textContent = combo.join(" + ");
-          btn.dataset.slots = JSON.stringify(combo);
-          btn.addEventListener("click", () => selectSlot(btn, combo));
-          cont.appendChild(btn);
-        });
-      }
-
-      /* ═══════════════════════════════════════════
-       TAB NAVIGATION
-    ═══════════════════════════════════════════ */
-      function switchTab(name, el) {
-        document
-          .querySelectorAll(".nav-tab")
-          .forEach((t) => t.classList.remove("active"));
-        document
-          .querySelectorAll(".panel")
-          .forEach((p) => p.classList.remove("active"));
-        el.classList.add("active");
-        document.getElementById("panel-" + name).classList.add("active");
-        if (name === "timetable") renderTimetable();
-        if (name === "summary") renderSummary();
-      }
-
-      /* ═══════════════════════════════════════════
-       SLOT PANE TOGGLE
-    ═══════════════════════════════════════════ */
-      function showSlotPane(pane) {
-        currentPane = pane;
-        document
-          .getElementById("pane-theory")
-          .classList.toggle("active", pane === "theory");
-        document
-          .getElementById("pane-lab")
-          .classList.toggle("active", pane === "lab");
-        const tBtn = document.getElementById("btn-theory-toggle");
-        const lBtn = document.getElementById("btn-lab-toggle");
-        tBtn.classList.toggle("theory-on", pane === "theory");
-        tBtn.classList.toggle("lab-on", false);
-        lBtn.classList.toggle("lab-on", pane === "lab");
-        lBtn.classList.toggle("theory-on", false);
-        selectedSlots = [];
-        document
-          .querySelectorAll(".slot-btn")
-          .forEach((b) => b.classList.remove("selected"));
-        updateSelectedDisplay();
-      }
-
-      /* ═══════════════════════════════════════════
-       SLOT SELECTION
-    ═══════════════════════════════════════════ */
-      function selectSlot(btn, combo) {
-        document
-          .querySelectorAll(".slot-btn")
-          .forEach((b) => b.classList.remove("selected"));
-        btn.classList.add("selected");
-        selectedSlots = combo;
-        updateSelectedDisplay();
-      }
-
-      function updateSelectedDisplay() {
-        const el = document.getElementById("selected-slot-display");
-        if (selectedSlots.length) {
-          el.textContent = "> " + selectedSlots.join(" + ");
-          el.classList.add("visible");
-          el.classList.toggle("lab-mode", currentPane === "lab");
-        } else {
-          el.classList.remove("visible");
-        }
-      }
-
-      /* ═══════════════════════════════════════════
-       COURSE MANAGEMENT
-    ═══════════════════════════════════════════ */
-      function getUsedSlotsMap() {
-        const map = {};
-        courses.forEach((c) =>
-          c.slots.forEach((s) => {
-            if (!map[s]) map[s] = [];
-            map[s].push(c.id);
-          }),
-        );
-        return map;
-      }
-
-      function buildTimeOverlapSet() {
-        const overlaps = new Set();
-        DAYS.forEach((day) => {
-          const tBlocks = THEORY_BLOCKS[day];
-          const lBlocks = LAB_BLOCKS[day];
-          
-          // Check morning slots (raw 0-5)
-          for (let raw = 0; raw < 6; raw++) {
-            if (tBlocks[raw] === "-" || lBlocks[raw] === "-") continue;
-            const tCourse = getCourseForBlock(tBlocks[raw]);
-            const lCourse = getCourseForBlock(lBlocks[raw]);
-            if (tCourse && lCourse) overlaps.add(day + ":" + raw);
-          }
-          
-          // Check afternoon slots (raw 7-12)
-          for (let raw = 7; raw < 13; raw++) {
-            if (tBlocks[raw] === "-" || lBlocks[raw] === "-") continue;
-            const tCourse = getCourseForBlock(tBlocks[raw]);
-            const lCourse = getCourseForBlock(lBlocks[raw]);
-            if (tCourse && lCourse) overlaps.add(day + ":" + raw);
-          }
-        });
-        return overlaps;
-      }
-
-      function recalcConflicts() {
-        const map = getUsedSlotsMap();
-        const overlaps = buildTimeOverlapSet();
-
-        // collect all block names involved in time overlaps
-        const overlapBlocks = new Set();
-        DAYS.forEach((day) => {
-          const tBlocks = THEORY_BLOCKS[day];
-          const lBlocks = LAB_BLOCKS[day];
-          for (let raw = 0; raw < tBlocks.length; raw++) {
-            if (overlaps.has(day + ":" + raw)) {
-              if (tBlocks[raw] !== "LUNCH" && tBlocks[raw] !== "-")
-                overlapBlocks.add(tBlocks[raw]);
-              if (lBlocks[raw] !== "LUNCH" && lBlocks[raw] !== "-")
-                overlapBlocks.add(lBlocks[raw]);
-            }
-          }
-        });
-
-        courses.forEach((c) => {
-          const dup = c.slots.some((s) => map[s] && map[s].length > 1);
-          const time = c.slots.some((s) => overlapBlocks.has(s));
-          c.hasConflict = dup || time;
-        });
-      }
-
-      function addCourse() {
-        const code = document
-          .getElementById("inp-code")
-          .value.trim()
-          .toUpperCase();
-        if (!code) {
-          showToast("⚠ Course code required", "warn");
-          return;
-        }
-        if (!selectedSlots.length) {
-          showToast("⚠ Select a slot first", "warn");
-          return;
-        }
-
-        const course = {
-          id: Date.now(),
-          code,
-          name: document.getElementById("inp-name").value.trim(),
-          faculty: document.getElementById("inp-faculty").value.trim(),
-          room: document.getElementById("inp-room").value.trim(),
-          credits: parseInt(document.getElementById("inp-credits").value) || 0,
-          slots: [...selectedSlots],
-          hasConflict: false,
-        };
-        courses.push(course);
-        recalcConflicts();
-        lsSave();
-        clearForm();
-        renderCoursesList();
-        updateBadge();
-        if (course.hasConflict) {
-          showToast("⚡ " + code + " added — time clash!", "warn");
-        } else {
-          showToast("✓ " + code + " added", "ok");
-        }
-      }
-
-      function deleteCourse(id) {
-        courses = courses.filter((c) => c.id !== id);
-        recalcConflicts();
-        lsSave();
-        renderCoursesList();
-        updateBadge();
-        showToast("✓ Course removed", "ok");
-      }
-
-      function clearForm() {
-        [
-          "inp-code",
-          "inp-name",
-          "inp-faculty",
-          "inp-room",
-          "inp-credits",
-        ].forEach((id) => (document.getElementById(id).value = ""));
-        selectedSlots = [];
-        document
-          .querySelectorAll(".slot-btn")
-          .forEach((b) => b.classList.remove("selected"));
-        updateSelectedDisplay();
-      }
-
-      function clearAll() {
-        if (!courses.length) {
-          showToast("⚠ No courses to clear", "warn");
-          return;
-        }
-        if (
-          !confirm(
-            "Remove ALL " +
-              courses.length +
-              " course(s) from your timetable?\nThis will also clear localStorage. Cannot be undone.",
-          )
+      if (
+        !confirm(
+          "Remove ALL " +
+          courses.length +
+          " course(s) from your timetable?\nThis will also clear localStorage. Cannot be undone.",
         )
-          return;
-        courses = [];
-        lsSave();
-        renderCoursesList();
-        renderTimetable();
-        renderSummary();
-        updateBadge();
-        showToast("✓ All courses cleared", "ok");
-      }
+      )
+        return;
+      courses = [];
+      editingCourseId = null;
+      lsSave();
+      renderCoursesList();
+      renderTimetable();
+      renderSummary();
+      updateBadge();
+      showToast("✓ All courses cleared", "ok");
+    }
 
-      function updateBadge() {
-        const badge = document.getElementById("course-count-badge");
-        if (courses.length) {
-          badge.textContent = courses.length;
-          badge.style.display = "inline";
-        } else {
-          badge.style.display = "none";
-        }
+    function updateBadge() {
+      const badge = document.getElementById("course-count-badge");
+      if (courses.length) {
+        badge.textContent = courses.length;
+        badge.style.display = "inline";
+      } else {
+        badge.style.display = "none";
       }
+    }
 
-      function renderCoursesList() {
-        const cont = document.getElementById("courses-list-container");
-        if (!courses.length) {
-          cont.innerHTML = "";
-          return;
-        }
-        let html = '<div class="courses-list">';
-        courses.forEach((c) => {
-          html += `<div class="course-item${c.hasConflict ? " conflict-item" : ""}">
+    function renderCoursesList() {
+      const cont = document.getElementById("courses-list-container");
+      if (!courses.length) {
+        cont.innerHTML = "";
+        return;
+      }
+      let html = '<div class="courses-list">';
+      courses.forEach((c) => {
+        html += `<div class="course-item${c.hasConflict ? " conflict-item" : ""}">
       <span class="ci-code">${esc(c.code)}</span>
       <span class="ci-slot">${esc(c.slots.join("+"))}</span>
       <span class="ci-name">${esc(c.name || "—")}</span>
       ${c.credits ? `<span class="ci-credits">${c.credits} cr</span>` : ""}
       <button class="ci-del" onclick="deleteCourse(${c.id})" aria-label="Remove">×</button>
     </div>`;
-        });
-        html += "</div>";
-        cont.innerHTML = html;
+      });
+      html += "</div>";
+      cont.innerHTML = html;
+    }
+
+    /* ═══════════════════════════════════════════
+     TIMETABLE RENDER
+  ═══════════════════════════════════════════ */
+    function getCourseForBlock(block) {
+      if (block === "-" || block === "LUNCH") return null;
+      return courses.find((c) => c.slots.includes(block)) || null;
+    }
+
+    function isSlotDuplicate(block) {
+      const map = getUsedSlotsMap();
+      return map[block] && map[block].length > 1;
+    }
+
+    function renderSlotCell(block, day, raw, overlaps) {
+      if (block === "-") {
+        return `<td class="sc sc-dash"><span class="sc-block" style="color:#2a2a3d">—</span></td>`;
       }
 
-      /* ═══════════════════════════════════════════
-       TIMETABLE RENDER
-    ═══════════════════════════════════════════ */
-      function getCourseForBlock(block) {
-        if (block === "-" || block === "LUNCH") return null;
-        return courses.find((c) => c.slots.includes(block)) || null;
-      }
+      const course = getCourseForBlock(block);
+      const dupConf = isSlotDuplicate(block);
+      const timeOver = overlaps.has(day + ":" + raw);
+      let cls = "sc";
+      if (dupConf || timeOver) cls += " sc-conflict";
+      else if (course) cls += " sc-filled";
 
-      function isSlotDuplicate(block) {
-        const map = getUsedSlotsMap();
-        return map[block] && map[block].length > 1;
-      }
+      const tip = timeOver && course ? ' title="⚡ Theory + Lab overlap at this hour"' : '';
 
-      function renderSlotCell(block, day, raw, overlaps) {
-        if (block === "-") {
-          return `<td class="sc sc-dash"><span class="sc-block" style="color:#2a2a3d">—</span></td>`;
-        }
-        
-        const course = getCourseForBlock(block);
-        const dupConf = isSlotDuplicate(block);
-        const timeOver = overlaps.has(day + ":" + raw);
-        let cls = "sc";
-        if (dupConf || timeOver) cls += " sc-conflict";
-        else if (course) cls += " sc-filled";
-        
-        const tip = timeOver && course ? ' title="⚡ Theory + Lab overlap at this hour"' : '';
-        
-        return `<td class="${cls}"${tip}>
+      return `<td class="${cls}"${tip}>
       <span class="sc-block">${esc(block)}</span>
       ${course ? `<span class="sc-code">${esc(course.code)}</span>` : ""}
       ${course && course.name ? `<span class="sc-name">${esc(course.name)}</span>` : ""}
+      ${course && course.room ? `<span class="sc-room">🏫 ${esc(course.room)}</span>` : ""}
       ${timeOver && course ? `<span class="sc-overlap-tag">⚡CLASH</span>` : ""}
     </td>`;
-      }
+    }
 
-      function renderTimetable() {
-        const cont = document.getElementById("tt-container");
-        if (!courses.length) {
-          cont.innerHTML = `<div class="card"><div class="empty-state">
+    function renderTimetable() {
+      const cont = document.getElementById("tt-container");
+      if (!courses.length) {
+        cont.innerHTML = `<div class="card"><div class="empty-state">
       <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
       <p>// NO_COURSES_FOUND</p>
       <p style="margin-top:6px;font-size:11px">Add courses to populate your timetable</p>
     </div></div>`;
-          return;
-        }
+        return;
+      }
 
-        const overlaps = buildTimeOverlapSet();
+      const overlaps = buildTimeOverlapSet();
 
-        let html = `<div class="tt-scroll-wrap"><table class="tt-table" role="grid">
+      let html = `<div class="tt-scroll-wrap"><table class="tt-table" role="grid">
   <thead><tr>
     <th class="th-corner" rowspan="3">DAY<span class="th-corner-label">↔ scroll</span></th>
     <th class="th-corner" rowspan="3" style="min-width:50px;width:50px;padding:4px 3px;line-height:1.4;">
@@ -2389,78 +2526,63 @@
       <span style="display:block;font-size:8px;font-weight:800;color:var(--pink);font-family:'JetBrains Mono',monospace;letter-spacing:.4px;text-shadow:0 0 6px var(--pink-glow);">Lab</span>
     </th>`;
 
-        // Theory timing headers (P1-P6)
-        for (let i = 0; i < 6; i++)
-          html += `<th class="th-time-theory">${THEORY_TIMES[i]}<br>–${THEORY_TIMES_END[i]}</th>`;
-        
-        // Lunch header column
-        html += `<th class="td-lunch" rowspan="3" style="font-size:8px;width:34px;min-width:34px">🍽<br>LUNCH</th>`;
-        
-        // Theory timing headers (P7-P12)
-        for (let i = 7; i < 13; i++)
-          html += `<th class="th-time-theory">${THEORY_TIMES[i]}<br>–${THEORY_TIMES_END[i]}</th>`;
-        html += `</tr><tr>`;
+      for (let i = 0; i < 6; i++)
+        html += `<th class="th-time-theory">${THEORY_TIMES[i]}<br>–${THEORY_TIMES_END[i]}</th>`;
 
-        // Lab timing headers (P1-P6)
-        for (let i = 0; i < 6; i++)
-          html += `<th class="th-time-lab">${LAB_TIMES[i]}<br>–${LAB_TIMES_END[i]}</th>`;
-        
-        // Lab timing headers (P7-P12)
-        for (let i = 7; i < 13; i++)
-          html += `<th class="th-time-lab">${LAB_TIMES[i]}<br>–${LAB_TIMES_END[i]}</th>`;
-        html += `</tr><tr>`;
+      html += `<th class="td-lunch" rowspan="3" style="font-size:8px;width:34px;min-width:34px">🍽<br>LUNCH</th>`;
 
-        // Period numbers (P1-P6)
-        for (let i = 0; i < 6; i++)
-          html += `<th class="th-period">P${i + 1}</th>`;
-        
-        // Period numbers (P7-P12)
-        for (let i = 7; i < 13; i++)
-          html += `<th class="th-period">P${i}</th>`;
-        html += `</tr></thead><tbody>`;
+      for (let i = 7; i < 13; i++)
+        html += `<th class="th-time-theory">${THEORY_TIMES[i]}<br>–${THEORY_TIMES_END[i]}</th>`;
+      html += `</tr><tr>`;
 
-        DAYS.forEach((day) => {
-          const tBlocks = THEORY_BLOCKS[day];
-          const lBlocks = LAB_BLOCKS[day];
+      for (let i = 0; i < 6; i++)
+        html += `<th class="th-time-lab">${LAB_TIMES[i]}<br>–${LAB_TIMES_END[i]}</th>`;
 
-          // Theory row
-          html += `<tr><td class="td-day" rowspan="2">${day}</td><td class="td-theory-label">Theory</td>`;
-          
-          // Morning theory cells (P1-P6)
-          for (let raw = 0; raw < 6; raw++) {
-            html += renderSlotCell(tBlocks[raw], day, raw, overlaps);
-          }
-          
-          // Lunch cell for theory row
-          html += `<td class="td-lunch">🍽<br>LUNCH</td>`;
-          
-          // Afternoon theory cells (P7-P12)
-          for (let raw = 7; raw < 13; raw++) {
-            html += renderSlotCell(tBlocks[raw], day, raw, overlaps);
-          }
-          
-          html += `</tr>`;
+      for (let i = 7; i < 13; i++)
+        html += `<th class="th-time-lab">${LAB_TIMES[i]}<br>–${LAB_TIMES_END[i]}</th>`;
+      html += `</tr><tr>`;
 
-          // Lab row
-          html += `<tr><td class="td-lab-label">Lab</td>`;
-          
-          // Morning lab cells (P1-P6)
-          for (let raw = 0; raw < 6; raw++) {
-            html += renderSlotCell(lBlocks[raw], day, raw, overlaps);
-          }
-          
-          // Lunch cell for lab row
-          html += `<td class="td-lunch">🍽<br>LUNCH</td>`;
-          
-          // Afternoon lab cells (P7-P12)
-          for (let raw = 7; raw < 13; raw++) {
-            html += renderSlotCell(lBlocks[raw], day, raw, overlaps);
-          }
-          
-          html += `</tr>`;
-        });
+      for (let i = 0; i < 6; i++)
+        html += `<th class="th-period">P${i + 1}</th>`;
 
-        html += `</tbody></table>
+      for (let i = 7; i < 13; i++)
+        html += `<th class="th-period">P${i}</th>`;
+      html += `</tr></thead><tbody>`;
+
+      DAYS.forEach((day) => {
+        const tBlocks = THEORY_BLOCKS[day];
+        const lBlocks = LAB_BLOCKS[day];
+
+        html += `<tr><td class="td-day" rowspan="2">${day}</td><td class="td-theory-label">Theory</td>`;
+
+        for (let raw = 0; raw < 6; raw++) {
+          html += renderSlotCell(tBlocks[raw], day, raw, overlaps);
+        }
+
+        html += `<td class="td-lunch">🍽<br>LUNCH</td>`;
+
+        for (let raw = 7; raw < 13; raw++) {
+          html += renderSlotCell(tBlocks[raw], day, raw, overlaps);
+        }
+
+        html += `</tr>`;
+
+        html += `<tr><td class="td-lab-label">Lab</td>`;
+
+        for (let raw = 0; raw < 6; raw++) {
+          html += renderSlotCell(lBlocks[raw], day, raw, overlaps);
+        }
+
+        html += `<td class="td-lunch">🍽<br>LUNCH</td>`;
+
+        for (let raw = 7; raw < 13; raw++) {
+          html += renderSlotCell(lBlocks[raw], day, raw, overlaps);
+        }
+
+        html += `</tr>`;
+      });
+
+      html += `</tbody></table>
   <div class="tt-legend">
     <span><span class="legend-dot ld-empty"></span>Empty</span>
     <span><span class="legend-dot ld-filled"></span>Scheduled</span>
@@ -2468,29 +2590,29 @@
     <span><span class="legend-dot ld-lunch"></span>Lunch</span>
   </div></div>`;
 
-        cont.innerHTML = html;
-      }
+      cont.innerHTML = html;
+    }
 
-      /* ═══════════════════════════════════════════
-       SUMMARY RENDER
-    ═══════════════════════════════════════════ */
-      function renderSummary() {
-        const cont = document.getElementById("summary-container");
-        if (!courses.length) {
-          cont.innerHTML = `<div class="card"><div class="empty-state">
+    /* ═══��═══════════════════════════════════════
+     SUMMARY RENDER (WITH EDIT FEATURE)
+  ═══════════════════════════════════════════ */
+    function renderSummary() {
+      const cont = document.getElementById("summary-container");
+      if (!courses.length) {
+        cont.innerHTML = `<div class="card"><div class="empty-state">
       <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1.5" fill="currentColor" stroke="none"/><circle cx="3" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="3" cy="18" r="1.5" fill="currentColor" stroke="none"/></svg>
       <p>// NO_COURSES_FOUND</p>
     </div></div>`;
-          return;
-        }
-        recalcConflicts();
-        const totalCr = courses.reduce((s, c) => s + (c.credits || 0), 0);
-        const nConflict = courses.filter((c) => c.hasConflict).length;
-        const nLabs = courses.filter((c) =>
-          c.slots.some((s) => s.startsWith("L")),
-        ).length;
+        return;
+      }
+      recalcConflicts();
+      const totalCr = courses.reduce((s, c) => s + (c.credits || 0), 0);
+      const nConflict = courses.filter((c) => c.hasConflict).length;
+      const nLabs = courses.filter((c) =>
+        c.slots.some((s) => s.startsWith("L")),
+      ).length;
 
-        let html = `<div class="summary-stats">
+      let html = `<div class="summary-stats">
     <div class="stat-card">
       <div class="stat-num">${courses.length}</div>
       <div class="stat-label">COURSES</div>
@@ -2509,108 +2631,133 @@
     </div>
   </div>`;
 
-        html += `<div class="result-wrap"><table class="result-table">
+      html += `<div class="result-wrap"><table class="result-table">
     <thead><tr>
       <th>#</th><th>CODE</th><th>NAME</th>
       <th>FACULTY</th><th>ROOM</th><th>SLOTS</th><th>CR</th>
+      <th>ACTIONS</th>
     </tr></thead><tbody>`;
 
-        courses.forEach((c, i) => {
-          html += `<tr class="${c.hasConflict ? "conflict-row" : ""}">
-      <td style="color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:11px">${i + 1}</td>
+      courses.forEach((c, i) => {
+        const isEditing = editingCourseId === c.id;
+
+        html += `<tr class="${c.hasConflict ? "conflict-row" : ""}">
+      <td style="color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:11px">${i + 1}</td>`;
+
+        if (isEditing) {
+          html += `
+      <td><input class="edit-input" id="edit-code-${c.id}" value="${esc(c.code)}" style="width:100px" /></td>
+      <td><input class="edit-input" id="edit-name-${c.id}" value="${esc(c.name || "")}" placeholder="Course name" /></td>
+      <td><input class="edit-input" id="edit-faculty-${c.id}" value="${esc(c.faculty || "")}" placeholder="Faculty" /></td>
+      <td><input class="edit-input" id="edit-room-${c.id}" value="${esc(c.room || "")}" placeholder="Room" /></td>
+      <td><span class="slot-pill">${esc(c.slots.join("+"))}</span></td>
+      <td><input class="edit-input" id="edit-credits-${c.id}" value="${c.credits || ""}" type="number" min="0" max="10" style="width:50px" /></td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-save" onclick="saveEditCourse(${c.id})">✓ Save</button>
+        <button class="btn btn-cancel" onclick="cancelEditCourse()">✕</button>
+      </td>`;
+        } else {
+          html += `
       <td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--cyan)">${esc(c.code)}</td>
       <td>${esc(c.name || "—")}</td>
       <td style="color:var(--text2)">${esc(c.faculty || "—")}</td>
       <td style="color:var(--text2)">${esc(c.room || "—")}</td>
       <td><span class="slot-pill">${esc(c.slots.join("+"))}</span></td>
       <td style="font-family:'JetBrains Mono',monospace;font-weight:700">${c.credits || "—"}</td>
-    </tr>`;
-        });
+      <td style="white-space:nowrap">
+        <button class="btn btn-edit" onclick="startEditCourse(${c.id})">✎ Edit</button>
+        <button class="btn btn-cancel" onclick="deleteCourse(${c.id})" style="padding:4px 8px">🗑</button>
+      </td>`;
+        }
 
-        html += `</tbody><tfoot><tr>
-    <td colspan="6" style="text-align:right;padding-right:16px;color:var(--text3);font-size:11px;font-family:'JetBrains Mono',monospace">TOTAL_CREDITS</td>
+        html += `</tr>`;
+      });
+
+      html += `</tbody><tfoot><tr>
+    <td colspan="7" style="text-align:right;padding-right:16px;color:var(--text3);font-size:11px;font-family:'JetBrains Mono',monospace">TOTAL_CREDITS</td>
     <td style="font-family:'JetBrains Mono',monospace;font-weight:800;color:${totalCr > 30 ? "var(--red)" : "var(--cyan)"};text-shadow:0 0 8px ${totalCr > 30 ? "var(--red-glow)" : "var(--cyan-glow)"};">${totalCr}</td>
   </tr></tfoot></table></div>`;
 
-        if (totalCr > 30) {
-          html += `<div class="alert alert-danger"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      if (totalCr > 30) {
+        html += `<div class="alert alert-danger"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       <div><strong>CREDIT_OVERLOAD:</strong> ${totalCr} credits exceeds the 30-credit cap. Drop a course.</div></div>`;
-        } else if (totalCr > 25) {
-          html += `<div class="alert alert-warn"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      } else if (totalCr > 25) {
+        html += `<div class="alert alert-warn"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       <div><strong>WARNING:</strong> High credit load — ${totalCr}/30 credits.</div></div>`;
-        }
-        if (nConflict > 0) {
-          html += `<div class="alert alert-danger" style="margin-top:8px"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      }
+      if (nConflict > 0) {
+        html += `<div class="alert alert-danger" style="margin-top:8px"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
       <div><strong>${nConflict} CONFLICT${nConflict > 1 ? "S" : ""}_DETECTED:</strong> Red rows = duplicate slots or Theory/Lab time clash. Check Timetable tab for ⚡CLASH markers.</div></div>`;
-        }
-        if (nConflict === 0 && totalCr <= 30 && courses.length) {
-          html += `<div class="alert alert-success"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      }
+      if (nConflict === 0 && totalCr <= 30 && courses.length) {
+        html += `<div class="alert alert-success"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       <div><strong>STATUS_OK:</strong> No conflicts. Credits within limit. Your timetable is ready.</div></div>`;
-        }
-        cont.innerHTML = html;
       }
+      cont.innerHTML = html;
+    }
 
-      /* ═══════════════════════════════════════════
-       DOWNLOAD / COPY
-    ═══════════════════════════════════════════ */
-      function buildTextSummary() {
-        const line = "═".repeat(55);
-        let txt = `FFCS-FAST // VIT CHENNAI TIMETABLE\nBuilt by Meijeevan K.T\n${line}\n\n`;
-        courses.forEach((c, i) => {
-          txt += `${i + 1}. ${c.code}${c.name ? " — " + c.name : ""}\n`;
-          txt += `   Slot    : ${c.slots.join(" + ")}\n`;
-          if (c.faculty) txt += `   Faculty : ${c.faculty}\n`;
-          if (c.room) txt += `   Room    : ${c.room}\n`;
-          if (c.credits) txt += `   Credits : ${c.credits}\n`;
-          if (c.hasConflict) txt += `   ⚡ CONFLICT DETECTED\n`;
-          txt += "\n";
-        });
-        const total = courses.reduce((s, c) => s + (c.credits || 0), 0);
-        txt += `${line}\nTotal Credits : ${total}${total > 30 ? " ⚠ EXCEEDS 30!" : ""}\nCourses       : ${courses.length}\n`;
-        return txt;
-      }
+    /* ═══════════════════════════════════════════
+     DOWNLOAD / COPY
+  ═══════════════════════════════════════════ */
+    function buildTextSummary() {
+      const line = "═".repeat(55);
+      let txt = `FFCS-FAST // VIT CHENNAI TIMETABLE\nBuilt by Meijeevan K.T\n${line}\n\n`;
+      courses.forEach((c, i) => {
+        txt += `${i + 1}. ${c.code}${c.name ? " — " + c.name : ""}\n`;
+        txt += `   Slot    : ${c.slots.join(" + ")}\n`;
+        if (c.faculty) txt += `   Faculty : ${c.faculty}\n`;
+        if (c.room) txt += `   Room    : ${c.room}\n`;
+        if (c.credits) txt += `   Credits : ${c.credits}\n`;
+        if (c.hasConflict) txt += `   ⚡ CONFLICT DETECTED\n`;
+        txt += "\n";
+      });
+      const total = courses.reduce((s, c) => s + (c.credits || 0), 0);
+      txt += `${line}\nTotal Credits : ${total}${total > 30 ? " ⚠ EXCEEDS 30!" : ""}\nCourses       : ${courses.length}\n`;
+      return txt;
+    }
 
-      function downloadTimetable() {
-        const txt = buildTextSummary();
-        const blob = new Blob([txt], { type: "text/plain" });
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "FFCS-timetable.txt";
-        a.click();
-        showToast("✓ Downloaded", "ok");
-      }
+    function downloadTimetable() {
+      const txt = buildTextSummary();
+      const blob = new Blob([txt], {type: "text/plain"});
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "FFCS-timetable.txt";
+      a.click();
+      showToast("✓ Downloaded", "ok");
+    }
 
-      function copyToClipboard() {
-        navigator.clipboard
-          .writeText(buildTextSummary())
-          .then(() => showToast("✓ Copied!", "ok"))
-          .catch(() => showToast("⚠ Copy failed", "warn"));
-      }
+    function copyToClipboard() {
+      navigator.clipboard
+        .writeText(buildTextSummary())
+        .then(() => showToast("✓ Copied!", "ok"))
+        .catch(() => showToast("⚠ Copy failed", "warn"));
+    }
 
-      /* ═══════════════════════════════════════════
-       UTILS
-    ═══════════════════════════════════════════ */
-      function esc(str) {
-        if (!str) return "";
-        return str
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
-      }
+    /* ═══════════════════════════════════════════
+     UTILS
+  ═══════════════════════════════════════════ */
+    function esc(str) {
+      if (!str) return "";
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
 
-      let toastTimer;
-      function showToast(msg, type) {
-        const t = document.getElementById("toast");
-        t.textContent = msg;
-        t.className = type || "";
-        t.classList.add("show");
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => t.classList.remove("show"), 2400);
-      }
+    let toastTimer;
+    function showToast(msg, type) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.className = type || "";
+      t.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove("show"), 2400);
+    }
 
-      /* Boot */
-      init();
-    </script>
-  </body>
+    /* Boot */
+    init();
+  </script>
+</body>
+
 </html>
