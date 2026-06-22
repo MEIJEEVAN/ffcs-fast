@@ -2173,8 +2173,18 @@
         DAYS.forEach((day) => {
           const tBlocks = THEORY_BLOCKS[day];
           const lBlocks = LAB_BLOCKS[day];
-          for (let raw = 0; raw < tBlocks.length; raw++) {
-            if (tBlocks[raw] === "LUNCH") continue;
+          
+          // Check morning slots (raw 0-5)
+          for (let raw = 0; raw < 6; raw++) {
+            if (tBlocks[raw] === "-" || lBlocks[raw] === "-") continue;
+            const tCourse = getCourseForBlock(tBlocks[raw]);
+            const lCourse = getCourseForBlock(lBlocks[raw]);
+            if (tCourse && lCourse) overlaps.add(day + ":" + raw);
+          }
+          
+          // Check afternoon slots (raw 7-12)
+          for (let raw = 7; raw < 13; raw++) {
+            if (tBlocks[raw] === "-" || lBlocks[raw] === "-") continue;
             const tCourse = getCourseForBlock(tBlocks[raw]);
             const lCourse = getCourseForBlock(lBlocks[raw]);
             if (tCourse && lCourse) overlaps.add(day + ":" + raw);
@@ -2285,9 +2295,9 @@
           return;
         courses = [];
         lsSave();
-        renderCoursesList(); // refresh Add Course tab list
-        renderTimetable(); // refresh Timetable tab (clears to empty state)
-        renderSummary(); // refresh Summary tab
+        renderCoursesList();
+        renderTimetable();
+        renderSummary();
         updateBadge();
         showToast("✓ All courses cleared", "ok");
       }
@@ -2335,6 +2345,28 @@
         return map[block] && map[block].length > 1;
       }
 
+      function renderSlotCell(block, day, raw, overlaps) {
+        if (block === "-") {
+          return `<td class="sc sc-dash"><span class="sc-block" style="color:#2a2a3d">—</span></td>`;
+        }
+        
+        const course = getCourseForBlock(block);
+        const dupConf = isSlotDuplicate(block);
+        const timeOver = overlaps.has(day + ":" + raw);
+        let cls = "sc";
+        if (dupConf || timeOver) cls += " sc-conflict";
+        else if (course) cls += " sc-filled";
+        
+        const tip = timeOver && course ? ' title="⚡ Theory + Lab overlap at this hour"' : '';
+        
+        return `<td class="${cls}"${tip}>
+      <span class="sc-block">${esc(block)}</span>
+      ${course ? `<span class="sc-code">${esc(course.code)}</span>` : ""}
+      ${course && course.name ? `<span class="sc-name">${esc(course.name)}</span>` : ""}
+      ${timeOver && course ? `<span class="sc-overlap-tag">⚡CLASH</span>` : ""}
+    </td>`;
+      }
+
       function renderTimetable() {
         const cont = document.getElementById("tt-container");
         if (!courses.length) {
@@ -2357,26 +2389,34 @@
       <span style="display:block;font-size:8px;font-weight:800;color:var(--pink);font-family:'JetBrains Mono',monospace;letter-spacing:.4px;text-shadow:0 0 6px var(--pink-glow);">Lab</span>
     </th>`;
 
-        // Theory timing headers
+        // Theory timing headers (P1-P6)
         for (let i = 0; i < 6; i++)
           html += `<th class="th-time-theory">${THEORY_TIMES[i]}<br>–${THEORY_TIMES_END[i]}</th>`;
+        
+        // Lunch header column
         html += `<th class="td-lunch" rowspan="3" style="font-size:8px;width:34px;min-width:34px">🍽<br>LUNCH</th>`;
+        
+        // Theory timing headers (P7-P12)
         for (let i = 7; i < 13; i++)
           html += `<th class="th-time-theory">${THEORY_TIMES[i]}<br>–${THEORY_TIMES_END[i]}</th>`;
         html += `</tr><tr>`;
 
-        // Lab timing headers
+        // Lab timing headers (P1-P6)
         for (let i = 0; i < 6; i++)
           html += `<th class="th-time-lab">${LAB_TIMES[i]}<br>–${LAB_TIMES_END[i]}</th>`;
+        
+        // Lab timing headers (P7-P12)
         for (let i = 7; i < 13; i++)
           html += `<th class="th-time-lab">${LAB_TIMES[i]}<br>–${LAB_TIMES_END[i]}</th>`;
         html += `</tr><tr>`;
 
-        // Period numbers
+        // Period numbers (P1-P6)
         for (let i = 0; i < 6; i++)
           html += `<th class="th-period">P${i + 1}</th>`;
+        
+        // Period numbers (P7-P12)
         for (let i = 7; i < 13; i++)
-          html += `<th class="th-period">P${i - 1}</th>`;
+          html += `<th class="th-period">P${i}</th>`;
         html += `</tr></thead><tbody>`;
 
         DAYS.forEach((day) => {
@@ -2385,52 +2425,38 @@
 
           // Theory row
           html += `<tr><td class="td-day" rowspan="2">${day}</td><td class="td-theory-label">Theory</td>`;
-          tBlocks.forEach((block, raw) => {
-            if (block === "LUNCH") return;
-            if (block === "-") {
-              html += `<td class="sc sc-dash"><span class="sc-block" style="color:#2a2a3d">—</span></td>`;
-              return;
-            }
-            const course = getCourseForBlock(block);
-            const dupConf = isSlotDuplicate(block);
-            const timeOver = overlaps.has(day + ":" + raw);
-            let cls = "sc";
-            if (dupConf || timeOver) cls += " sc-conflict";
-            else if (course) cls += " sc-filled";
-            const tip =
-              timeOver && course
-                ? ' title="⚡ Theory + Lab overlap at this hour"'
-                : "";
-            html += `<td class="${cls}"${tip}>
-        <span class="sc-block">${esc(block)}</span>
-        ${course ? `<span class="sc-code">${esc(course.code)}</span>` : ""}
-        ${course && course.name ? `<span class="sc-name">${esc(course.name)}</span>` : ""}
-        ${timeOver && course ? `<span class="sc-overlap-tag">⚡CLASH</span>` : ""}
-      </td>`;
-          });
+          
+          // Morning theory cells (P1-P6)
+          for (let raw = 0; raw < 6; raw++) {
+            html += renderSlotCell(tBlocks[raw], day, raw, overlaps);
+          }
+          
+          // Lunch cell for theory row
+          html += `<td class="td-lunch">🍽<br>LUNCH</td>`;
+          
+          // Afternoon theory cells (P7-P12)
+          for (let raw = 7; raw < 13; raw++) {
+            html += renderSlotCell(tBlocks[raw], day, raw, overlaps);
+          }
+          
           html += `</tr>`;
 
           // Lab row
           html += `<tr><td class="td-lab-label">Lab</td>`;
-          lBlocks.forEach((block, raw) => {
-            if (block === "LUNCH") return;
-            const course = getCourseForBlock(block);
-            const dupConf = isSlotDuplicate(block);
-            const timeOver = overlaps.has(day + ":" + raw);
-            let cls = "sc";
-            if (dupConf || timeOver) cls += " sc-conflict";
-            else if (course) cls += " sc-filled";
-            const tip =
-              timeOver && course
-                ? ' title="⚡ Theory + Lab overlap at this hour"'
-                : "";
-            html += `<td class="${cls}"${tip}>
-        <span class="sc-block">${esc(block)}</span>
-        ${course ? `<span class="sc-code">${esc(course.code)}</span>` : ""}
-        ${course && course.name ? `<span class="sc-name">${esc(course.name)}</span>` : ""}
-        ${timeOver && course ? `<span class="sc-overlap-tag">⚡CLASH</span>` : ""}
-      </td>`;
-          });
+          
+          // Morning lab cells (P1-P6)
+          for (let raw = 0; raw < 6; raw++) {
+            html += renderSlotCell(lBlocks[raw], day, raw, overlaps);
+          }
+          
+          // Lunch cell for lab row
+          html += `<td class="td-lunch">🍽<br>LUNCH</td>`;
+          
+          // Afternoon lab cells (P7-P12)
+          for (let raw = 7; raw < 13; raw++) {
+            html += renderSlotCell(lBlocks[raw], day, raw, overlaps);
+          }
+          
           html += `</tr>`;
         });
 
@@ -2529,7 +2555,7 @@
     ═══════════════════════════════════════════ */
       function buildTextSummary() {
         const line = "═".repeat(55);
-        let txt = `FFCS-BY-ME // VIT CHENNAI TIMETABLE\n${line}\n\n`;
+        let txt = `FFCS-FAST // VIT CHENNAI TIMETABLE\nBuilt by Meijeevan K.T\n${line}\n\n`;
         courses.forEach((c, i) => {
           txt += `${i + 1}. ${c.code}${c.name ? " — " + c.name : ""}\n`;
           txt += `   Slot    : ${c.slots.join(" + ")}\n`;
