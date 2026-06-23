@@ -1276,7 +1276,7 @@
         border-radius: var(--r-md);
         font-size: 13px;
         font-weight: 500;
-        margin-top: 10px;s
+        margin-top: 10px;
       }
 
       .alert svg {
@@ -2136,10 +2136,15 @@
        SLOT SELECTION
     ═══════════════════════════════════════════ */
       function selectSlot(btn, combo) {
+        const isLab = combo[0] && combo[0].startsWith("L");
         if (btn.classList.contains("selected")) {
           btn.classList.remove("selected");
           selectedCombos = selectedCombos.filter(c => JSON.stringify(c) !== JSON.stringify(combo));
         } else {
+          const paneSelector = isLab ? ".lab-pane .slot-btn" : "#pane-theory .slot-btn";
+          document.querySelectorAll(paneSelector).forEach(b => b.classList.remove("selected"));
+          selectedCombos = selectedCombos.filter(c => (c[0] && c[0].startsWith("L")) !== isLab);
+          
           btn.classList.add("selected");
           selectedCombos.push(combo);
         }
@@ -2236,7 +2241,7 @@
 
         const creditsStr = document.getElementById("inp-credits").value;
         const credits = Number(creditsStr);
-        if (creditsStr.trim() !== "" && (isNaN(credits) || credits < 0)) {
+        if (creditsStr.trim() !== "" && (!Number.isInteger(credits) || credits < 0)) {
             showToast("⚠ Invalid credits value", "warn");
             return;
         }
@@ -2254,6 +2259,7 @@
           room: document.getElementById("inp-room").value.trim(),
           credits: creditsStr.trim() !== "" ? credits : 0,
           slots: [...selectedSlots],
+          combos: [...selectedCombos],
           hasConflict: false,
         };
 
@@ -2269,7 +2275,9 @@
         clearForm();
         renderCoursesList();
         updateBadge();
-        if (course.hasConflict) {
+        
+        const savedCourse = courses.find(c => c.id === course.id);
+        if (savedCourse && savedCourse.hasConflict) {
           showToast("⚡ " + code + (editingId ? " updated" : " added") + " — time clash!", "warn");
         } else {
           showToast("✓ " + code + (editingId ? " updated" : " added"), "ok");
@@ -2320,28 +2328,39 @@
 
         document.querySelectorAll(".slot-btn").forEach((b) => b.classList.remove("selected"));
         selectedSlots = [...c.slots];
-        selectedCombos = [];
+        selectedCombos = c.combos ? [...c.combos] : [];
         
-        const btns = Array.from(document.querySelectorAll(".slot-btn"));
-        btns.sort((a, b) => {
-            const aLen = a.dataset.slots ? JSON.parse(a.dataset.slots).length : 0;
-            const bLen = b.dataset.slots ? JSON.parse(b.dataset.slots).length : 0;
-            return bLen - aLen;
-        });
-        
-        let remainingSlots = [...c.slots];
-        btns.forEach((btn) => {
-          if (btn.dataset.slots) {
-            const combo = JSON.parse(btn.dataset.slots);
-            if (combo.length > 0 && combo.every(s => remainingSlots.includes(s))) {
-              btn.classList.add("selected");
-              selectedCombos.push(combo);
-              combo.forEach(s => {
-                  remainingSlots = remainingSlots.filter(rs => rs !== s);
-              });
-            }
-          }
-        });
+        if (c.combos && c.combos.length > 0) {
+            document.querySelectorAll(".slot-btn").forEach((btn) => {
+              if (btn.dataset.slots) {
+                const comboStr = btn.dataset.slots;
+                if (c.combos.some(sc => JSON.stringify(sc) === comboStr)) {
+                  btn.classList.add("selected");
+                }
+              }
+            });
+        } else {
+            const btns = Array.from(document.querySelectorAll(".slot-btn"));
+            btns.sort((a, b) => {
+                const aLen = a.dataset.slots ? JSON.parse(a.dataset.slots).length : 0;
+                const bLen = b.dataset.slots ? JSON.parse(b.dataset.slots).length : 0;
+                return bLen - aLen;
+            });
+            
+            let remainingSlots = [...c.slots];
+            btns.forEach((btn) => {
+              if (btn.dataset.slots) {
+                const combo = JSON.parse(btn.dataset.slots);
+                if (combo.length > 0 && combo.every(s => remainingSlots.includes(s))) {
+                  btn.classList.add("selected");
+                  selectedCombos.push(combo);
+                  combo.forEach(s => {
+                      remainingSlots = remainingSlots.filter(rs => rs !== s);
+                  });
+                }
+              }
+            });
+        }
         updateSelectedDisplay();
 
         const addTab = Array.from(document.querySelectorAll(".nav-tab")).find(t => t.textContent.includes("Add Course") || t.textContent.includes("Update Course"));
