@@ -1276,7 +1276,7 @@
         border-radius: var(--r-md);
         font-size: 13px;
         font-weight: 500;
-        margin-top: 10px;
+        margin-top: 10px;s
       }
 
       .alert svg {
@@ -1626,13 +1626,13 @@
         </div>
 
         <div class="btn-row">
-          <button class="btn primary" onclick="addCourse()">
-            <svg viewBox="0 0 24 24">
+          <button class="btn primary" id="btn-submit-course" onclick="addCourse()">
+            <svg id="icon-submit-course" viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="8" x2="12" y2="16" />
               <line x1="8" y1="12" x2="16" y2="12" />
             </svg>
-            Add Course
+            <span id="text-submit-course">Add Course</span>
           </button>
           <button class="btn" onclick="clearForm()">
             <svg viewBox="0 0 24 24">
@@ -2041,8 +2041,11 @@
           const raw = localStorage.getItem(LS_KEY);
           if (raw) {
             const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed))
-              return parsed.map((c) => ({ ...c, hasConflict: false }));
+            if (Array.isArray(parsed)) {
+              return parsed
+                .filter(c => c && c.id && c.code && Array.isArray(c.slots))
+                .map((c) => ({ ...c, hasConflict: false }));
+            }
           }
         } catch (e) {
           console.warn("Failed to load from localStorage", e);
@@ -2055,7 +2058,9 @@
     ═══════════════════════════════════════════ */
       let courses = [];
       let selectedSlots = [];
+      let selectedCombos = [];
       let currentPane = "theory";
+      let editingId = null;
 
       /* ═══════════════════════════════════════════
        INIT
@@ -2133,11 +2138,14 @@
       function selectSlot(btn, combo) {
         if (btn.classList.contains("selected")) {
           btn.classList.remove("selected");
-          selectedSlots = selectedSlots.filter(s => !combo.includes(s));
+          selectedCombos = selectedCombos.filter(c => JSON.stringify(c) !== JSON.stringify(combo));
         } else {
           btn.classList.add("selected");
-          selectedSlots = [...selectedSlots, ...combo];
+          selectedCombos.push(combo);
         }
+        
+        selectedSlots = [];
+        selectedCombos.forEach(c => selectedSlots.push(...c));
         selectedSlots = [...new Set(selectedSlots)];
         updateSelectedDisplay();
       }
@@ -2218,31 +2226,53 @@
           showToast("⚠ Course code required", "warn");
           return;
         }
+
+        const isDuplicate = courses.some(c => c.code === code && c.id !== editingId);
+        if (isDuplicate) {
+          if (!confirm(`Course code ${code} already exists. Are you sure you want to add it anyway?`)) {
+            return;
+          }
+        }
+
+        const creditsStr = document.getElementById("inp-credits").value;
+        const credits = Number(creditsStr);
+        if (creditsStr.trim() !== "" && (isNaN(credits) || credits < 0)) {
+            showToast("⚠ Invalid credits value", "warn");
+            return;
+        }
+
         if (!selectedSlots.length) {
           showToast("⚠ Select a slot first", "warn");
           return;
         }
 
         const course = {
-          id: Date.now(),
+          id: editingId ? editingId : Date.now(),
           code,
           name: document.getElementById("inp-name").value.trim(),
           faculty: document.getElementById("inp-faculty").value.trim(),
           room: document.getElementById("inp-room").value.trim(),
-          credits: parseInt(document.getElementById("inp-credits").value) || 0,
+          credits: creditsStr.trim() !== "" ? credits : 0,
           slots: [...selectedSlots],
           hasConflict: false,
         };
-        courses.push(course);
+
+        if (editingId) {
+          const idx = courses.findIndex(c => c.id === editingId);
+          if (idx !== -1) courses[idx] = course;
+        } else {
+          courses.push(course);
+        }
+
         recalcConflicts();
         lsSave();
         clearForm();
         renderCoursesList();
         updateBadge();
         if (course.hasConflict) {
-          showToast("⚡ " + code + " added — time clash!", "warn");
+          showToast("⚡ " + code + (editingId ? " updated" : " added") + " — time clash!", "warn");
         } else {
-          showToast("✓ " + code + " added", "ok");
+          showToast("✓ " + code + (editingId ? " updated" : " added"), "ok");
         }
       }
 
@@ -2259,13 +2289,18 @@
         const c = courses.find((c) => c.id === id);
         if (!c) return;
 
+        editingId = id;
+        document.getElementById("btn-submit-course").classList.remove("primary");
+        document.getElementById("btn-submit-course").classList.add("success-soft");
+        document.getElementById("text-submit-course").textContent = "Update Course";
+
         document.getElementById("inp-code").value = c.code;
         document.getElementById("inp-name").value = c.name;
         document.getElementById("inp-faculty").value = c.faculty;
         document.getElementById("inp-room").value = c.room;
         document.getElementById("inp-credits").value = c.credits || "";
 
-        const isLab = c.slots[0].startsWith("L");
+        const isLab = c.slots[0] && c.slots[0].startsWith("L");
         const tBtn = document.getElementById("btn-theory-toggle");
         const lBtn = document.getElementById("btn-lab-toggle");
         
@@ -2285,17 +2320,31 @@
 
         document.querySelectorAll(".slot-btn").forEach((b) => b.classList.remove("selected"));
         selectedSlots = [...c.slots];
-        c.slots.forEach((s) => {
-          document.querySelectorAll(".slot-btn").forEach((btn) => {
-            if (btn.getAttribute("onclick") && btn.getAttribute("onclick").includes(`'${s}'`)) {
+        selectedCombos = [];
+        
+        const btns = Array.from(document.querySelectorAll(".slot-btn"));
+        btns.sort((a, b) => {
+            const aLen = a.dataset.slots ? JSON.parse(a.dataset.slots).length : 0;
+            const bLen = b.dataset.slots ? JSON.parse(b.dataset.slots).length : 0;
+            return bLen - aLen;
+        });
+        
+        let remainingSlots = [...c.slots];
+        btns.forEach((btn) => {
+          if (btn.dataset.slots) {
+            const combo = JSON.parse(btn.dataset.slots);
+            if (combo.length > 0 && combo.every(s => remainingSlots.includes(s))) {
               btn.classList.add("selected");
+              selectedCombos.push(combo);
+              combo.forEach(s => {
+                  remainingSlots = remainingSlots.filter(rs => rs !== s);
+              });
             }
-          });
+          }
         });
         updateSelectedDisplay();
 
-        deleteCourse(id);
-        const addTab = Array.from(document.querySelectorAll(".nav-tab")).find(t => t.textContent.includes("Add Course"));
+        const addTab = Array.from(document.querySelectorAll(".nav-tab")).find(t => t.textContent.includes("Add Course") || t.textContent.includes("Update Course"));
         if (addTab) switchTab("add", addTab);
         
         document.getElementById("inp-code").focus();
@@ -2303,14 +2352,27 @@
       }
 
       function clearForm() {
+        editingId = null;
+        const submitBtn = document.getElementById("btn-submit-course");
+        if (submitBtn) {
+            submitBtn.classList.add("primary");
+            submitBtn.classList.remove("success-soft");
+        }
+        const textSubmit = document.getElementById("text-submit-course");
+        if (textSubmit) textSubmit.textContent = "Add Course";
+
         [
           "inp-code",
           "inp-name",
           "inp-faculty",
           "inp-room",
           "inp-credits",
-        ].forEach((id) => (document.getElementById(id).value = ""));
+        ].forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) el.value = "";
+        });
         selectedSlots = [];
+        selectedCombos = [];
         document
           .querySelectorAll(".slot-btn")
           .forEach((b) => b.classList.remove("selected"));
@@ -2331,7 +2393,8 @@
         )
           return;
         courses = [];
-        lsSave();
+        localStorage.removeItem(LS_KEY);
+        clearForm();
         renderCoursesList(); // refresh Add Course tab list
         renderTimetable(); // refresh Timetable tab (clears to empty state)
         renderSummary(); // refresh Summary tab
@@ -2603,7 +2666,8 @@
         const blob = new Blob([txt], { type: "text/plain" });
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = "FFCS-timetable.txt";
+        const dateStr = new Date().toISOString().replace(/[:.]/g, "-");
+        a.download = `FFCS-timetable-${dateStr}.txt`;
         a.click();
         showToast("✓ Downloaded", "ok");
       }
